@@ -1,0 +1,44 @@
+[
+  {
+    "zone": "food",
+    "title": "Food Zone",
+    "stalls": [
+      {
+        "id": "spice-scoo",
+        "name": "Spice Scoop",
+        "team": "Culinary Club • BBA 3rd Year",
+        "description": "Perfect crispy snacks and warm brews.",
+        "image": "https://5.imimg.com/data5/SELLER/Default/2024/12/474272438/HB/XW/OY/26724815/whatsapp-image-2024-12-18-at-7-46-33-pm-1000x1000.jpeg"
+      }
+    ]
+  },
+  {
+    "zone": "games",
+    "title": "Game Zone",
+    "stalls": [
+      {
+        "id": "arcade-arena",
+        "name": "Arcade Arena",
+        "team": "Game Guild • BCA 1st Year",
+        "description": "Retro joysticks, neon vibes, endless high scores.",
+        "image": "assets/stalls/arcade-arena.jpg"
+      }
+    
+    ]
+  },
+  {
+    "zone": "crafts",
+    "title": "Handicraft Zone",
+    "stalls": [
+      {
+        "id": "artsy-aura",
+        "name": "Artsy Aura",
+        "team": "Design Hive • BFA 1st Year",
+        "description": "Handcrafted threads woven with love and flair.",
+        "image": "assets/stalls/artsy-aura.jpg"
+      }
+    
+    ]
+  }
+]
+

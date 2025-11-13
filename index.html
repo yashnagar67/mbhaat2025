@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MB HAAT 2025 — Feedback Portal</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="fade-in">
+    <div class="sky-bubble sky-bubble--sun" aria-hidden="true"></div>
+    <div class="sky-bubble sky-bubble--balloon" aria-hidden="true"></div>
+    <div class="sky-bubble sky-bubble--mint" aria-hidden="true"></div>
+    <main class="page">
+      <header class="hero">
+        <div class="hero__text">
+          <button class="admin-btn" id="openAdmin" aria-haspopup="dialog">
+            Admin Panel
+          </button>
+          <p class="hero__spark">MB HAAT 2025</p>
+          <h1 class="hero__headline">Feedback Portal</h1>
+          <p class="hero__subtitle">
+            Your opinion adds spice to our event!
+          </p>
+          <p class="hero__note">
+            Give shimmering stars to every stall you love and help the fiesta glow brighter. ⭐
+          </p>
+        </div>
+      </header>
+
+      <section class="ratings" id="ratings">
+        <article class="zone-card" data-zone="food">
+          <h2>🥘 Food Zone</h2>
+          <p class="zone-card__hint">Taste the vibes! Rate each stall.</p>
+          <div class="stall-list" data-zone="food"></div>
+        </article>
+
+        <article class="zone-card" data-zone="games">
+          <h2>🎯 Game Zone</h2>
+          <p class="zone-card__hint">Rate the thrill! Did you hit the bullseye?</p>
+          <div class="stall-list" data-zone="games"></div>
+        </article>
+
+        <article class="zone-card" data-zone="crafts">
+          <h2>🎨 Handicraft Zone</h2>
+          <p class="zone-card__hint">Show love for the handmade magic.</p>
+          <div class="stall-list" data-zone="crafts"></div>
+        </article>
+      </section>
+
+      <section class="submit-box">
+        <button class="submit-btn" id="submitFeedback">
+          Submit My Ratings 🍜🎯🎨
+        </button>
+        <p class="status-message" id="statusMessage"></p>
+      </section>
+    </main>
+
+    <div class="modal" id="adminModal" aria-hidden="true" role="dialog" aria-labelledby="adminModalTitle">
+      <div class="modal__overlay" data-close-modal></div>
+      <div class="modal__content" role="document">
+        <button class="modal__close" id="closeAdmin" aria-label="Close admin panel">
+          ×
+        </button>
+        <div id="adminLoginSection" class="modal__section">
+          <h2 id="adminModalTitle">Admin Access</h2>
+          <p class="modal__subtitle">
+            Enter credentials to manage feedback data.
+          </p>
+          <form id="adminLoginForm" class="modal__form">
+            <label class="modal__label">
+              Username
+              <input type="text" id="adminUsername" autocomplete="username" required />
+            </label>
+            <label class="modal__label">
+              Password
+              <input type="password" id="adminPassword" autocomplete="current-password" required />
+            </label>
+            <button type="submit" class="modal__primary">Login</button>
+            <p class="modal__error" id="adminError" role="alert"></p>
+          </form>
+        </div>
+
+        <div id="adminDashboard" class="modal__section hidden">
+          <h2>Feedback Summary</h2>
+          <div class="admin-stats" id="adminStats"></div>
+          <div class="admin-actions">
+            <button class="modal__primary" id="exportRatings">Download Ratings JSON</button>
+            <button class="modal__secondary" id="resetRatings">Delete All Ratings</button>
+            <button class="modal__secondary" id="unlockFeedback">Unlock Feedback Form</button>
+            <button class="modal__primary modal__primary--accent" id="revealWinner">
+              Reveal Winner
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hidden-badge" id="allStarsBadge" aria-hidden="true">
+      <div class="badge">
+        <p>🏅 Triple 5-Star Champion!</p>
+        <p>You unlocked the MB HAAT magic moment! ✨</p>
+      </div>
+    </div>
+
+    <div class="modal modal--user" id="userModal" aria-hidden="true" role="dialog" aria-labelledby="userModalTitle">
+      <div class="modal__overlay" data-close-user></div>
+      <div class="modal__content" role="document">
+        <h2 id="userModalTitle">Welcome to MB HAAT 2025!</h2>
+        <p class="modal__subtitle">
+          Tell us who you are so we can spice up the experience.
+        </p>
+        <form id="userInfoForm" class="modal__form">
+          <label class="modal__label">
+            Your Name
+            <input type="text" id="userName" name="name" placeholder="e.g. Priya Singh" required />
+          </label>
+          <label class="modal__label">
+            Course / Year
+            <input type="text" id="userCourse" name="course" placeholder="e.g. BSc 2nd Year" required />
+          </label>
+          <button type="submit" class="modal__primary">
+            Let's Give Feedback
+          </button>
+          <p class="modal__error" id="userFormError" role="alert"></p>
+        </form>
+      </div>
+    </div>
+
+    <div class="winner-overlay" id="winnerOverlay" aria-hidden="true" role="dialog" aria-labelledby="winnerHeading">
+      <div class="winner-overlay__backdrop" data-close-winner></div>
+      <div class="winner-overlay__content">
+        <button class="winner-overlay__close" id="closeWinner" aria-label="Close winner reveal">
+          ×
+        </button>
+        <div class="winner-overlay__sparkles" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <p class="winner-overlay__prelude">And the crowd-favorite stall is...</p>
+        <p class="winner-overlay__countdown" id="winnerCountdown">3</p>
+        <article class="winner-card" id="winnerCard">
+          <h2 id="winnerHeading">🏆 Winner</h2>
+          <p class="winner-card__stall" id="winnerStall"></p>
+          <p class="winner-card__zone" id="winnerZone"></p>
+          <p class="winner-card__rating" id="winnerRating"></p>
+          <p class="winner-card__reaction" id="winnerReaction"></p>
+        </article>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
+
