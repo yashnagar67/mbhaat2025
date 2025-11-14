@@ -4,30 +4,63 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MB HAAT 2025 — Feedback Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Comic+Neue:wght@700&family=Patrick+Hand&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="style.css" />
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   </head>
-  <body class="fade-in">
-    <div class="sky-bubble sky-bubble--sun" aria-hidden="true"></div>
-    <div class="sky-bubble sky-bubble--balloon" aria-hidden="true"></div>
-    <div class="sky-bubble sky-bubble--mint" aria-hidden="true"></div>
-    <main class="page">
-      <header class="hero">
-        <div class="hero__text">
-          <button class="admin-btn" id="openAdmin" aria-haspopup="dialog">
-            Admin Panel
-          </button>
-          <p class="hero__spark">MB HAAT 2025</p>
-          <h1 class="hero__headline">Feedback Portal</h1>
-          <p class="hero__subtitle">
-            Your opinion adds spice to our event!
-          </p>
-          <p class="hero__note">
-            Give shimmering stars to every stall you love and help the fiesta glow brighter. ⭐
-          </p>
-        </div>
+  <body class="ui-body fade-in">
+    <!-- Decorative sky -->
+    <div class="ui-sun" aria-hidden="true">
+      <span role="presentation">😊</span>
+    </div>
+    <div class="ui-balloon ui-balloon--lt" aria-hidden="true">🎈</div>
+    <div class="ui-balloon ui-balloon--rt" aria-hidden="true">🎈</div>
+    <div class="ui-balloon ui-balloon--lb" aria-hidden="true">🎈</div>
+
+    <!-- Confetti + candy scatter -->
+    <div class="ui-confetti-dot" style="top: 120px; left: 15%" aria-hidden="true"></div>
+    <div class="ui-confetti-dot" style="top: 180px; right: 20%" aria-hidden="true"></div>
+    <div class="ui-confetti-dot" style="top: 250px; left: 10%" aria-hidden="true"></div>
+    <div class="ui-confetti-dot" style="top: 350px; right: 15%" aria-hidden="true"></div>
+    <div class="ui-confetti-dot" style="top: 450px; left: 18%" aria-hidden="true"></div>
+    <div class="ui-confetti-dot" style="top: 550px; right: 25%" aria-hidden="true"></div>
+    <div class="ui-confetti-dot" style="top: 650px; left: 12%" aria-hidden="true"></div>
+    <div class="ui-confetti-dot" style="top: 750px; right: 18%" aria-hidden="true"></div>
+    <div class="ui-candy" style="top: 440px; right: 25px" aria-hidden="true">🍭</div>
+    <div class="ui-candy" style="top: 680px; right: 15px" aria-hidden="true">🍭</div>
+    <div class="ui-candy" style="top: 500px; left: 10px" aria-hidden="true">🍬</div>
+    <div class="ui-candy" style="top: 300px; right: 10px" aria-hidden="true">🌀</div>
+    <div class="ui-candy" style="top: 820px; left: 25px; font-size: 30px" aria-hidden="true">🍬</div>
+    <div class="ui-small-sparkle" style="top: 850px; right: 30px" aria-hidden="true">☀️</div>
+    <div class="ui-small-sparkle" style="top: 140px; left: 50px" aria-hidden="true">✨</div>
+    <div class="ui-small-sparkle" style="top: 380px; left: 40px" aria-hidden="true">✨</div>
+    <div class="ui-small-sparkle" style="top: 600px; right: 35px" aria-hidden="true">✨</div>
+    <div class="ui-small-sparkle" style="top: 400px; right: 50px" aria-hidden="true">💫</div>
+
+    <main class="page ui-shell" role="main">
+      <header class="hero ui-hero">
+        <button class="admin-btn" id="openAdmin" aria-haspopup="dialog">
+          Admin Panel
+        </button>
+        <p class="hero__spark ui-title">MB HAAT 2025 —</p>
+        <h1 class="hero__headline ui-subtitle">Feedback Portal</h1>
+        <p class="hero__subtitle ui-tagline">
+          Your opinion adds spice to our event!
+          <span aria-hidden="true">🌶️🌶️</span>
+        </p>
+        <p class="hero__note ui-note">
+          Give shimmering stars to every stall you love and help the fiesta glow brighter. ⭐
+        </p>
       </header>
 
-      <section class="ratings" id="ratings">
+      <section class="ratings ui-card-stack" id="ratings">
         <article class="zone-card" data-zone="food">
           <h2>🥘 Food Zone</h2>
           <p class="zone-card__hint">Taste the vibes! Rate each stall.</p>
@@ -47,7 +80,7 @@
         </article>
       </section>
 
-      <section class="submit-box">
+      <section class="submit-box ui-submit">
         <button class="submit-btn" id="submitFeedback">
           Submit My Ratings 🍜🎯🎨
         </button>

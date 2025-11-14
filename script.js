@@ -1,18 +1,45 @@
-const API_BASE_URL = "https://mbhaatfeedbackbackend-1.onrender.com/api";
-const STALLS_ENDPOINT = `${API_BASE_URL}/stalls`;
-const RATINGS_ENDPOINT = `${API_BASE_URL}/ratings`;
-const SUMMARY_ENDPOINT = `${API_BASE_URL}/ratings/summary`;
+const STALLS_ENDPOINT = "stalls.json";
+
+// Firebase Configuration - Replace with your Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyB1IN-K39FrRZZpv2rYiGJ0zlnPhnjxcAQ",
+  authDomain: "mv-haat.firebaseapp.com",
+  projectId: "mv-haat",
+  storageBucket: "mv-haat.firebasestorage.app",
+  messagingSenderId: "53410657472",
+  appId: "1:53410657472:web:420882eec56a0934ed6925",
+  measurementId: "G-GGB3W93K0E"
+};
+
+// Initialize Firebase
+let db = null;
+const initFirebase = () => {
+  try {
+    if (typeof firebase !== 'undefined') {
+      if (firebase.apps.length === 0) {
+        firebase.initializeApp(firebaseConfig);
+      }
+      db = firebase.firestore();
+      console.log("Firebase initialized successfully");
+    } else {
+      console.warn("Firebase SDK not loaded");
+    }
+  } catch (error) {
+    console.error("Firebase initialization error:", error);
+  }
+};
+
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initFirebase);
+} else {
+  initFirebase();
+}
 
 let stallsConfig = [];
 const appData = {
   summary: [],
 };
-
-const defaultStallImage =
-  "data:image/svg+xml;charset=UTF-8," +
-  encodeURIComponent(
-    `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 160'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23FFE3C4'/><stop offset='1' stop-color='%23FFF9F0'/></linearGradient></defs><rect width='160' height='160' rx='28' fill='url(%23g)'/><text x='50%' y='55%' text-anchor='middle' dominant-baseline='middle' font-family='Poppins, Arial, sans-serif' font-size='44' fill='%23FF8A00'>MB</text></svg>`
-  );
 
 const reactionsMap = {
   1: "😶‍🌫️ Needs a pinch more magic.",
@@ -20,6 +47,13 @@ const reactionsMap = {
   3: "😋 Yummy fun, keep it going!",
   4: "🤩 Loved it a lot!",
   5: "🔥 You loved it!",
+};
+
+const zoneEmojiMap = {
+  food: "🌮",
+  games: "🎯",
+  crafts: "🎨",
+  default: "⭐",
 };
 
 const storageKey = "mbhaat-feedback-2025";
@@ -76,36 +110,6 @@ const findStallById = (stallId) => {
   return null;
 };
 
-const transformApiStalls = (list = []) => {
-  const zoneMap = new Map();
-
-  list.forEach((stall) => {
-    const zoneKey = stall.zone || "general";
-    const zoneTitle = stall.zoneTitle || formatLabel(zoneKey);
-    const normalized = {
-      id: stall.stallId || stall.id,
-      name: stall.name,
-      team: stall.team || "",
-      description: stall.description || "",
-      image: stall.image || "",
-    };
-
-    if (!normalized.id) return;
-
-    if (!zoneMap.has(zoneKey)) {
-      zoneMap.set(zoneKey, {
-        zone: zoneKey,
-        title: zoneTitle,
-        stalls: [],
-      });
-    }
-
-    zoneMap.get(zoneKey).stalls.push(normalized);
-  });
-
-  return Array.from(zoneMap.values());
-};
-
 const loadStallsConfig = async () => {
   const populateSubmittedFromLegacy = () => {
     if (
@@ -120,53 +124,60 @@ const loadStallsConfig = async () => {
   try {
     const response = await fetch(STALLS_ENDPOINT, { cache: "no-store" });
     if (!response.ok) {
-      throw new Error(`Unable to fetch API stalls (${response.status})`);
+      throw new Error(`Unable to fetch stalls.json (${response.status})`);
     }
     const data = await response.json();
     if (Array.isArray(data)) {
-      stallsConfig = transformApiStalls(data);
+      stallsConfig = data;
       populateSubmittedFromLegacy();
-      return;
+    } else {
+      throw new Error("Invalid stalls.json format.");
     }
-    throw new Error("Invalid API stall payload.");
-  } catch (apiError) {
-    console.warn("Falling back to local stalls.json:", apiError);
-    try {
-      const response = await fetch("stalls.json", { cache: "no-store" });
-      if (!response.ok) {
-        throw new Error(`Unable to fetch stalls.json (${response.status})`);
-      }
-      const data = await response.json();
-      if (Array.isArray(data)) {
-        stallsConfig = data;
-        populateSubmittedFromLegacy();
-      } else {
-        throw new Error("Invalid stalls.json format.");
-      }
-    } catch (fileError) {
-      console.error("Failed to load stalls configuration:", fileError);
-      stallsConfig = [];
-    }
+  } catch (error) {
+    console.error("Failed to load stalls configuration:", error);
+    stallsConfig = [];
   }
 };
 
 const isStallSubmitted = (stallId) => state.submittedStalls.has(stallId);
 
-const createStallCard = (stall) => {
+const getStallEmoji = (stall, zone) =>
+  stall.emoji ||
+  zone?.emoji ||
+  zoneEmojiMap[zone?.zone] ||
+  zoneEmojiMap.default;
+
+const createStallCard = (stall, zone) => {
   const card = document.createElement("article");
   card.className = "stall-card";
   card.dataset.stall = stall.id;
 
-  const image = document.createElement("img");
-  image.className = "stall-card__image";
-  image.src = stall.image || defaultStallImage;
-  image.alt = stall.imageAlt || `${stall.name} display`;
-  image.loading = "lazy";
-  image.addEventListener("error", () => {
-    if (image.src !== defaultStallImage) {
-      image.src = defaultStallImage;
-    }
-  });
+  const body = document.createElement("div");
+  body.className = "stall-card__body";
+
+  const iconWrapper = document.createElement("div");
+  iconWrapper.className = "stall-card__icon";
+  
+  // Use image if provided, otherwise use emoji
+  if (stall.image && stall.image.trim() !== "") {
+    const image = document.createElement("img");
+    image.className = "stall-card__icon-image";
+    image.src = stall.image;
+    image.alt = `${stall.name} image`;
+    image.loading = "lazy";
+    image.addEventListener("error", () => {
+      // Fallback to emoji if image fails to load
+      iconWrapper.innerHTML = "";
+      const fallbackIcon = document.createElement("span");
+      fallbackIcon.textContent = getStallEmoji(stall, zone);
+      iconWrapper.append(fallbackIcon);
+    });
+    iconWrapper.append(image);
+  } else {
+    const icon = document.createElement("span");
+    icon.textContent = getStallEmoji(stall, zone);
+    iconWrapper.append(icon);
+  }
 
   const title = document.createElement("h3");
   title.className = "stall-card__title";
@@ -193,6 +204,10 @@ const createStallCard = (stall) => {
   reaction.className = "reaction";
   reaction.setAttribute("data-reaction", "");
 
+  const interactions = document.createElement("div");
+  interactions.className = "stall-card__interactions";
+  interactions.append(stars, reaction);
+
   const submitButton = document.createElement("button");
   submitButton.type = "button";
   submitButton.className = "stall-card__submit is-hidden";
@@ -215,11 +230,17 @@ const createStallCard = (stall) => {
   bestBadge.textContent = "BEST EVER!";
   bestBadge.setAttribute("aria-hidden", "true");
 
-  card.append(image, title);
+  const info = document.createElement("div");
+  info.className = "stall-card__info";
+  info.append(title);
   if (meta) {
-    card.append(meta);
+    info.append(meta);
   }
-  card.append(stars, reaction, submitButton, status, description, bestBadge);
+  info.append(interactions, submitButton);
+
+  body.append(iconWrapper, info);
+
+  card.append(body, status, description, bestBadge);
 
   return card;
 };
@@ -246,7 +267,7 @@ const renderStallCards = () => {
     if (!container) return;
 
     (zone.stalls || []).forEach((stall) => {
-      const card = createStallCard(stall);
+      const card = createStallCard(stall, zone);
       container.appendChild(card);
     });
   });
@@ -306,15 +327,51 @@ const setCardStatus = (stallId, message = "", variant = "info") => {
 };
 
 const refreshSummary = async () => {
+  if (!db) {
+    console.warn("Firebase not initialized. Summary unavailable.");
+    appData.summary = [];
+    return;
+  }
+
   try {
-    const response = await fetch(SUMMARY_ENDPOINT, { cache: "no-store" });
-    if (!response.ok) {
-      throw new Error(`Summary fetch failed (${response.status})`);
-    }
-    const data = await response.json();
-    appData.summary = Array.isArray(data.summary) ? data.summary : [];
+    const ratingsSnapshot = await db.collection("ratings").get();
+    const ratingsData = [];
+    
+    ratingsSnapshot.forEach((doc) => {
+      const data = doc.data();
+      ratingsData.push({
+        stallId: data.stallId,
+        stars: data.stars || data.rating || 0,
+        timestamp: data.timestamp || doc.id,
+      });
+    });
+
+    // Calculate summary by stall
+    const summaryMap = new Map();
+    
+    ratingsData.forEach((rating) => {
+      const stallId = rating.stallId;
+      if (!stallId) return;
+      
+      if (!summaryMap.has(stallId)) {
+        summaryMap.set(stallId, {
+          stallId: stallId,
+          id: stallId,
+          totalRatings: 0,
+          sumRatings: 0,
+          average: 0,
+        });
+      }
+      
+      const entry = summaryMap.get(stallId);
+      entry.totalRatings += 1;
+      entry.sumRatings += rating.stars;
+      entry.average = entry.sumRatings / entry.totalRatings;
+    });
+
+    appData.summary = Array.from(summaryMap.values());
   } catch (error) {
-    console.warn("Unable to load summary data:", error);
+    console.error("Unable to load summary data from Firebase:", error);
     appData.summary = [];
   }
 };
@@ -490,29 +547,33 @@ const handleStallSubmit = async (stallId) => {
 
   setCardStatus(stallId, "Saving your feedback...");
 
+  if (!db) {
+    setCardStatus(
+      stallId,
+      "Firebase not configured. Please check configuration.",
+      "error"
+    );
+    if (submitButton) {
+      submitButton.disabled = false;
+    }
+    return;
+  }
+
   try {
     const ratingValue = state.ratings[stallId];
     const reaction = reactionsMap[ratingValue] || "";
 
-    const response = await fetch(RATINGS_ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        stallId,
-        stars: ratingValue,
-        userName: userInfo.name,
-        userCourse: userInfo.course,
-        reaction,
-      }),
+    // Save rating to Firebase Firestore
+    await db.collection("ratings").add({
+      stallId: stallId,
+      stars: ratingValue,
+      rating: ratingValue, // Alternative field name for compatibility
+      userName: userInfo.name,
+      userCourse: userInfo.course,
+      reaction: reaction,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      createdAt: new Date().toISOString(),
     });
-
-    if (!response.ok) {
-      const errorPayload = await response.json().catch(() => ({}));
-      const message =
-        errorPayload?.error ||
-        `Unable to save feedback (status ${response.status}).`;
-      throw new Error(message);
-    }
 
     state.submittedStalls.add(stallId);
     saveToStorage();
@@ -520,7 +581,7 @@ const handleStallSubmit = async (stallId) => {
     updateCardSubmissionState(stallId);
     maybeShowBadge();
   } catch (error) {
-    console.error(error);
+    console.error("Firebase save error:", error);
     setCardStatus(
       stallId,
       error.message || "Something went wrong. Please try again.",
@@ -802,31 +863,71 @@ const handleAdminLogin = async (event) => {
   setAdminError("Incorrect username or password. Try again.");
 };
 
-const exportRatings = () => {
-  const data = {
-    ratings: state.ratings,
-    submittedStalls: Array.from(state.submittedStalls),
-    exportedAt: new Date().toISOString(),
-  };
+const exportRatings = async () => {
+  if (!db) {
+    alert("Firebase not configured. Cannot export ratings.");
+    return;
+  }
 
-  const blob = new Blob([JSON.stringify(data, null, 2)], {
-    type: "application/json",
-  });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "mbhaat-feedback-ratings.json";
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+  try {
+    const ratingsSnapshot = await db.collection("ratings").get();
+    const allRatings = [];
+    
+    ratingsSnapshot.forEach((doc) => {
+      const data = doc.data();
+      allRatings.push({
+        id: doc.id,
+        ...data,
+      });
+    });
+
+    const data = {
+      ratings: allRatings,
+      localRatings: state.ratings,
+      submittedStalls: Array.from(state.submittedStalls),
+      summary: appData.summary,
+      exportedAt: new Date().toISOString(),
+    };
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `mbhaat-feedback-ratings-${Date.now()}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Export error:", error);
+    alert("Failed to export ratings. Check console for details.");
+  }
 };
 
 const resetRatings = async () => {
   const confirmReset = window.confirm(
-    "Delete all ratings and unlock the form? This cannot be undone."
+    "Delete all ratings from Firebase and unlock the form? This cannot be undone."
   );
   if (!confirmReset) return;
+
+  if (db) {
+    try {
+      const batch = db.batch();
+      const ratingsSnapshot = await db.collection("ratings").get();
+      
+      ratingsSnapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+      
+      await batch.commit();
+      console.log("All ratings deleted from Firebase");
+    } catch (error) {
+      console.error("Error deleting ratings from Firebase:", error);
+      alert("Failed to delete ratings from Firebase. Check console for details.");
+    }
+  }
 
   state.ratings = {};
   state.submittedStalls.clear();
@@ -994,7 +1095,6 @@ const attachAdminHandlers = () => {
 const initAdminPanel = () => {
   cacheAdminElements();
   cacheWinnerElements();
-  cacheUserElements();
 
   if (adminElements.openBtn) {
     attachAdminHandlers();
@@ -1063,12 +1163,25 @@ const ensureUserProfile = () => {
 };
 
 const initApp = async () => {
+  // Ensure Firebase is initialized
+  if (typeof firebase !== 'undefined' && !db) {
+    initFirebase();
+    // Wait a bit for Firebase to initialize
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+
+  cacheUserElements();
+  ensureUserProfile();
   await loadStallsConfig();
   renderStallCards();
   pruneUnknownRatings();
   hydrateView();
   initAdminPanel();
-  ensureUserProfile();
+  
+  // Load summary from Firebase if available
+  if (db) {
+    await refreshSummary();
+  }
 };
 
 document.addEventListener("DOMContentLoaded", () => {

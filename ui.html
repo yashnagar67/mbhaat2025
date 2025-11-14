@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MB HAAT 2025 - Feedback Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Comic+Neue:wght@700&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Patrick Hand', cursive;
+            background: linear-gradient(180deg, #56CCF2 0%, #2F80ED 50%, #B2FEFA 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        /* Decorative elements */
+        .decoration {
+            position: absolute;
+            z-index: 1;
+        }
+
+        .sun {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #FFF176 0%, #FFD54F 100%);
+            border-radius: 50%;
+            position: absolute;
+            top: 60px;
+            right: 40px;
+            box-shadow: 0 0 40px rgba(255, 235, 59, 0.6), 0 0 80px rgba(255, 235, 59, 0.3);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .sun::before {
+            content: '😊';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+        }
+
+        .balloon {
+            position: absolute;
+            font-size: 35px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .balloon-left-top {
+            top: 90px;
+            left: 20px;
+        }
+
+        .balloon-right {
+            top: 380px;
+            right: 20px;
+        }
+
+        .balloon-left-bottom {
+            top: 350px;
+            left: 25px;
+        }
+
+        .candy {
+            position: absolute;
+            font-size: 25px;
+            animation: rotate 4s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-top: 20px;
+        }
+
+        .title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 42px;
+            color: #FF8C42;
+            text-shadow: 
+                3px 3px 0px #FFD93D,
+                -1px -1px 0px #fff,
+                1px -1px 0px #fff,
+                -1px 1px 0px #fff,
+                1px 1px 0px #fff;
+            line-height: 1.2;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-family: 'Fredoka One', cursive;
+            font-size: 38px;
+            color: #fff;
+            text-shadow: 
+                3px 3px 0px #6BCB77,
+                -1px -1px 0px #4D96A9,
+                1px -1px 0px #4D96A9,
+                -1px 1px 0px #4D96A9,
+                1px 1px 0px #4D96A9;
+            line-height: 1.2;
+        }
+
+        .tagline {
+            font-family: 'Comic Neue', cursive;
+            font-size: 18px;
+            color: #333;
+            margin-top: 15px;
+            font-weight: 700;
+        }
+
+        .stall-card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 30px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 
+                0 10px 30px rgba(0, 0, 0, 0.1),
+                0 1px 8px rgba(0, 0, 0, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .stall-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 15px 40px rgba(0, 0, 0, 0.15),
+                0 5px 15px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .stall-card:nth-child(1) {
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.98) 0%, rgba(255, 253, 240, 0.98) 100%);
+        }
+
+        .stall-card:nth-child(2) {
+            background: linear-gradient(135deg, rgba(255, 251, 210, 0.98) 0%, rgba(255, 248, 225, 0.98) 100%);
+        }
+
+        .stall-card:nth-child(3) {
+            background: linear-gradient(135deg, rgba(255, 253, 220, 0.98) 0%, rgba(255, 250, 235, 0.98) 100%);
+        }
+
+        .stall-icon {
+            font-size: 75px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+            transition: transform 0.3s ease;
+        }
+
+        .stall-card:hover .stall-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .stall-info {
+            flex: 1;
+        }
+
+        .stall-name {
+            font-family: 'Comic Neue', cursive;
+            font-size: 26px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 8px;
+            line-height: 1.2;
+        }
+
+        .stall-meta {
+            font-family: 'Patrick Hand', cursive;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .stars {
+            font-size: 28px;
+            letter-spacing: 2px;
+        }
+
+        .feedback-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 25px;
+            font-family: 'Comic Neue', cursive;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .feedback-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .feedback-btn:active {
+            transform: translateY(0);
+        }
+
+        .best-badge {
+            position: absolute;
+            bottom: -15px;
+            right: 20px;
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+            border: 4px solid #2d3748;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Comic Neue', cursive;
+            font-weight: 700;
+            font-size: 14px;
+            color: #2d3748;
+            text-align: center;
+            line-height: 1.1;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            transform: rotate(-15deg);
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: rotate(-15deg) translateY(0); }
+            50% { transform: rotate(-15deg) translateY(-10px); }
+        }
+
+        .best-badge::before {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-top: 20px solid #2d3748;
+        }
+
+        /* Scattered decorations */
+        .small-deco {
+            position: absolute;
+            font-size: 20px;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Decorative elements -->
+    <div class="sun"></div>
+    <div class="balloon balloon-left-top">🎈</div>
+    <div class="balloon balloon-right" style="animation-delay: 1s;">🎈</div>
+    <div class="balloon balloon-left-bottom" style="animation-delay: 0.5s; color: #FFD93D;">🎈</div>
+    
+    <!-- Confetti -->
+    <div class="confetti" style="top: 120px; left: 15%; background: #FF6B9D;"></div>
+    <div class="confetti" style="top: 180px; right: 20%; background: #FFD93D;"></div>
+    <div class="confetti" style="top: 250px; left: 10%; background: #FF8C42;"></div>
+    <div class="confetti" style="top: 350px; right: 15%; background: #6BCB77;"></div>
+    <div class="confetti" style="top: 450px; left: 18%; background: #FF6B9D;"></div>
+    <div class="confetti" style="top: 550px; right: 25%; background: #FFD93D;"></div>
+    <div class="confetti" style="top: 650px; left: 12%; background: #4D96A9;"></div>
+    <div class="confetti" style="top: 750px; right: 18%; background: #FF8C42;"></div>
+
+    <!-- Candy decorations -->
+    <div class="candy" style="top: 440px; right: 25px;">🍭</div>
+    <div class="candy" style="top: 680px; right: 15px; animation-delay: 1s;">🍭</div>
+    <div class="candy" style="top: 500px; left: 10px; animation-delay: 2s;">🍬</div>
+    <div class="candy" style="top: 300px; right: 10px;">🌀</div>
+    <div class="candy" style="top: 820px; left: 25px; font-size: 30px;">🍬</div>
+
+    <!-- Small suns -->
+    <div class="small-deco" style="top: 850px; right: 30px; font-size: 40px;">☀️</div>
+    <div class="small-deco" style="top: 140px; left: 50px; font-size: 25px;">✨</div>
+    <div class="small-deco" style="top: 380px; left: 40px; font-size: 25px;">✨</div>
+    <div class="small-deco" style="top: 600px; right: 35px; font-size: 25px;">✨</div>
+    <div class="small-deco" style="top: 400px; right: 50px; font-size: 30px;">💫</div>
+
+    <div class="container">
+        <div class="header">
+            <div class="title">MB HAAT 2025 —</div>
+            <div class="subtitle">Feedback Portal</div>
+            <div class="tagline">Your opinion adds spice to our event!🌶️🌶️</div>
+        </div>
+
+        <div class="stall-card">
+            <div class="stall-icon">🌮</div>
+            <div class="stall-info">
+                <div class="stall-name">Golgunpa's Delight</div>
+                <div class="stall-meta">By: [Owner Name, [Course] [Year]</div>
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <button class="feedback-btn" onclick="alert('Feedback form coming soon! 🎉')">Give Feedback</button>
+            </div>
+        </div>
+
+        <div class="stall-card">
+            <div class="stall-icon">🥟</div>
+            <div class="stall-info">
+                <div class="stall-name">Crispy Pakoda Corner</div>
+                <div class="stall-meta">By: [Owner Name, [Course] [Year]</div>
+                <div class="stars">⭐⭐⭐🌟</div>
+                <button class="feedback-btn" onclick="alert('Feedback form coming soon! 🎉')">Give Feedback</button>
+            </div>
+        </div>
+
+        <div class="stall-card">
+            <div class="stall-icon">🎨</div>
+            <div class="stall-info">
+                <div class="stall-name">Handmade Craft Wonders</div>
+                <div class="stall-meta">By: [Owner Name, [Course] [Year]</div>
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <button class="feedback-btn" onclick="alert('Feedback form coming soon! 🎉')">Give Feedback</button>
+            </div>
+            <div class="best-badge">BEST EVER!</div>
+        </div>
+    </div>
+</body>
+</html>
