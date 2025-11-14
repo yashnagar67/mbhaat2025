@@ -1162,6 +1162,65 @@ const ensureUserProfile = () => {
   userElements.form.addEventListener("submit", handleUserSubmit);
 };
 
+const handleSubmitAllRatings = async () => {
+  const submitBtn = document.getElementById("submitFeedback");
+  const statusMsg = document.getElementById("statusMessage");
+  
+  if (!submitBtn || !statusMsg) return;
+
+  const userInfo = getUserInfo();
+  if (!userInfo?.name || !userInfo?.course) {
+    statusMsg.textContent = "Please complete your profile first!";
+    statusMsg.style.color = "#e63946";
+    showUserModal();
+    return;
+  }
+
+  const allStallIds = getAllStallIds();
+  const unsubmittedRatings = allStallIds.filter(
+    (stallId) => state.ratings[stallId] && !isStallSubmitted(stallId)
+  );
+
+  if (unsubmittedRatings.length === 0) {
+    statusMsg.textContent = "All ratings have been submitted! 🎉";
+    statusMsg.style.color = "#6bcb77";
+    return;
+  }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Submitting... ⏳";
+  statusMsg.textContent = `Submitting ${unsubmittedRatings.length} rating(s)...`;
+  statusMsg.style.color = "#4d96a9";
+
+  let successCount = 0;
+  let errorCount = 0;
+
+  for (const stallId of unsubmittedRatings) {
+    try {
+      await handleStallSubmit(stallId);
+      successCount++;
+    } catch (error) {
+      console.error(`Error submitting ${stallId}:`, error);
+      errorCount++;
+    }
+  }
+
+  submitBtn.disabled = false;
+  submitBtn.textContent = "Submit My Ratings 🍜🎯🎨";
+
+  if (errorCount === 0) {
+    statusMsg.textContent = `✅ Successfully submitted ${successCount} rating(s)!`;
+    statusMsg.style.color = "#6bcb77";
+  } else {
+    statusMsg.textContent = `⚠️ Submitted ${successCount}, ${errorCount} failed. Please try again.`;
+    statusMsg.style.color = "#ff8c42";
+  }
+
+  setTimeout(() => {
+    statusMsg.textContent = "";
+  }, 5000);
+};
+
 const initApp = async () => {
   // Ensure Firebase is initialized
   if (typeof firebase !== 'undefined' && !db) {
@@ -1177,6 +1236,12 @@ const initApp = async () => {
   pruneUnknownRatings();
   hydrateView();
   initAdminPanel();
+  
+  // Attach main submit button handler
+  const submitBtn = document.getElementById("submitFeedback");
+  if (submitBtn) {
+    submitBtn.addEventListener("click", handleSubmitAllRatings);
+  }
   
   // Load summary from Firebase if available
   if (db) {
