@@ -141,6 +141,48 @@ const loadStallsConfig = async () => {
 
 const isStallSubmitted = (stallId) => state.submittedStalls.has(stallId);
 
+// Normalize userName: convert to lowercase and remove all spaces
+const normalizeUserName = (userName) => {
+  if (!userName || typeof userName !== 'string') return '';
+  return userName.toLowerCase().replace(/\s+/g, '');
+};
+
+// Check if user has already rated this stall
+const hasUserRatedStall = async (stallId, userName, userCourse) => {
+  if (!db || !stallId || !userName || !userCourse) return false;
+  
+  try {
+    const normalizedUserName = normalizeUserName(userName);
+    const normalizedCourse = userCourse.toLowerCase().trim();
+    
+    // Query Firebase for existing ratings for this stall
+    const ratingsSnapshot = await db.collection("ratings")
+      .where("stallId", "==", stallId)
+      .get();
+    
+    // Check if any rating matches the normalized userName + userCourse
+    let hasRated = false;
+    ratingsSnapshot.forEach((doc) => {
+      const data = doc.data();
+      
+      // Use normalized field if available, otherwise normalize on the fly
+      const existingNormalizedName = data.userNameNormalized || normalizeUserName(data.userName || '');
+      const existingCourse = (data.userCourse || '').toLowerCase().trim();
+      
+      if (existingNormalizedName === normalizedUserName && 
+          existingCourse === normalizedCourse) {
+        hasRated = true;
+      }
+    });
+    
+    return hasRated;
+  } catch (error) {
+    console.error("Error checking duplicate rating:", error);
+    // If there's an error checking, allow submission to proceed
+    return false;
+  }
+};
+
 const getStallEmoji = (stall, zone) =>
   stall.emoji ||
   zone?.emoji ||
@@ -212,9 +254,35 @@ const createStallCard = (stall, zone) => {
   submitButton.type = "button";
   submitButton.className = "stall-card__submit is-hidden";
   submitButton.textContent = "Submit Feedback";
-  submitButton.addEventListener("click", () =>
-    handleStallSubmit(stall.id)
-  );
+  
+  // Improved event handling with debouncing and touch support
+  let isSubmitting = false;
+  const handleClick = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (isSubmitting || isStallSubmitted(stall.id)) return;
+    
+    isSubmitting = true;
+    submitButton.disabled = true;
+    
+    try {
+      await handleStallSubmit(stall.id);
+    } catch (error) {
+      console.error("Submit error:", error);
+    } finally {
+      // Re-enable after a short delay to prevent double-clicks
+      setTimeout(() => {
+        isSubmitting = false;
+        if (!isStallSubmitted(stall.id)) {
+          submitButton.disabled = false;
+        }
+      }, 500);
+    }
+  };
+  
+  submitButton.addEventListener("click", handleClick);
+  submitButton.addEventListener("touchend", handleClick, { passive: false });
 
   const status = document.createElement("p");
   status.className = "stall-card__status";
@@ -545,7 +613,7 @@ const handleStallSubmit = async (stallId) => {
     return;
   }
 
-  setCardStatus(stallId, "Saving your feedback...");
+  setCardStatus(stallId, "Checking for duplicate...");
 
   if (!db) {
     setCardStatus(
@@ -559,9 +627,31 @@ const handleStallSubmit = async (stallId) => {
     return;
   }
 
+  // Check if user has already rated this stall
+  const alreadyRated = await hasUserRatedStall(
+    stallId,
+    userInfo.name,
+    userInfo.course
+  );
+
+  if (alreadyRated) {
+    setCardStatus(
+      stallId,
+      "⚠️ You have already rated this stall!",
+      "error"
+    );
+    if (submitButton) {
+      submitButton.disabled = false;
+    }
+    return;
+  }
+
+  setCardStatus(stallId, "Saving your feedback...");
+
   try {
     const ratingValue = state.ratings[stallId];
     const reaction = reactionsMap[ratingValue] || "";
+    const normalizedUserName = normalizeUserName(userInfo.name);
 
     // Save rating to Firebase Firestore
     await db.collection("ratings").add({
@@ -569,6 +659,7 @@ const handleStallSubmit = async (stallId) => {
       stars: ratingValue,
       rating: ratingValue, // Alternative field name for compatibility
       userName: userInfo.name,
+      userNameNormalized: normalizedUserName, // Store normalized version for easier querying
       userCourse: userInfo.course,
       reaction: reaction,
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),

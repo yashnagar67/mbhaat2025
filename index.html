@@ -149,7 +149,21 @@
           </label>
           <label class="modal__label">
             Course / Year
-            <input type="text" id="userCourse" name="course" placeholder="e.g. BSc 2nd Year" required />
+            <select id="userCourse" name="course" required>
+              <option value="">Select your course</option>
+              <option value="BA">BA</option>
+              <option value="BAbed">BAbed</option>
+              <option value="BSC">BSC</option>
+              <option value="BSC 1st Year">BSC 1st Year</option>
+              <option value="BSC 2nd Year">BSC 2nd Year</option>
+              <option value="BSC 3rd Year">BSC 3rd Year</option>
+              <option value="BA 1st Year">BA 1st Year</option>
+              <option value="BA 2nd Year">BA 2nd Year</option>
+              <option value="BA 3rd Year">BA 3rd Year</option>
+              <option value="BAbed 1st Year">BAbed 1st Year</option>
+              <option value="BAbed 2nd Year">BAbed 2nd Year</option>
+              <option value="BAbed 3rd Year">BAbed 3rd Year</option>
+            </select>
           </label>
           <button type="submit" class="modal__primary">
             Let's Give Feedback
