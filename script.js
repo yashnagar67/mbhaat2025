@@ -155,24 +155,23 @@ const hasUserRatedStall = async (stallId, userName, userCourse) => {
     const normalizedUserName = normalizeUserName(userName);
     const normalizedCourse = userCourse.toLowerCase().trim();
     
-    // Query Firebase for existing ratings for this stall
-    const ratingsSnapshot = await db.collection("ratings")
-      .where("stallId", "==", stallId)
-      .get();
+    // Get the stall document
+    const stallDoc = await db.collection("stalls").doc(stallId).get();
+    
+    if (!stallDoc.exists) {
+      return false; // Stall doesn't exist yet, so no duplicate
+    }
+    
+    const stallData = stallDoc.data();
+    const ratings = stallData.ratings || [];
     
     // Check if any rating matches the normalized userName + userCourse
-    let hasRated = false;
-    ratingsSnapshot.forEach((doc) => {
-      const data = doc.data();
+    const hasRated = ratings.some((rating) => {
+      const existingNormalizedName = rating.userNameNormalized || normalizeUserName(rating.userName || '');
+      const existingCourse = (rating.userCourse || '').toLowerCase().trim();
       
-      // Use normalized field if available, otherwise normalize on the fly
-      const existingNormalizedName = data.userNameNormalized || normalizeUserName(data.userName || '');
-      const existingCourse = (data.userCourse || '').toLowerCase().trim();
-      
-      if (existingNormalizedName === normalizedUserName && 
-          existingCourse === normalizedCourse) {
-        hasRated = true;
-      }
+      return existingNormalizedName === normalizedUserName && 
+             existingCourse === normalizedCourse;
     });
     
     return hasRated;
@@ -402,42 +401,32 @@ const refreshSummary = async () => {
   }
 
   try {
-    const ratingsSnapshot = await db.collection("ratings").get();
-    const ratingsData = [];
+    // Get all stall documents
+    const stallsSnapshot = await db.collection("stalls").get();
+    const summary = [];
     
-    ratingsSnapshot.forEach((doc) => {
+    stallsSnapshot.forEach((doc) => {
       const data = doc.data();
-      ratingsData.push({
-        stallId: data.stallId,
-        stars: data.stars || data.rating || 0,
-        timestamp: data.timestamp || doc.id,
+      const stallId = data.stallId || doc.id;
+      
+      if (!stallId) return;
+      
+      // Use stored values or calculate from ratings array
+      const totalRatings = data.totalRatings || (data.ratings || []).length;
+      const sumRatings = data.sumRatings || 
+        (data.ratings || []).reduce((sum, r) => sum + (r.stars || r.rating || 0), 0);
+      const average = data.average || (totalRatings > 0 ? sumRatings / totalRatings : 0);
+      
+      summary.push({
+        stallId: stallId,
+        id: stallId,
+        totalRatings: totalRatings,
+        sumRatings: sumRatings,
+        average: average,
       });
     });
 
-    // Calculate summary by stall
-    const summaryMap = new Map();
-    
-    ratingsData.forEach((rating) => {
-      const stallId = rating.stallId;
-      if (!stallId) return;
-      
-      if (!summaryMap.has(stallId)) {
-        summaryMap.set(stallId, {
-          stallId: stallId,
-          id: stallId,
-          totalRatings: 0,
-          sumRatings: 0,
-          average: 0,
-        });
-      }
-      
-      const entry = summaryMap.get(stallId);
-      entry.totalRatings += 1;
-      entry.sumRatings += rating.stars;
-      entry.average = entry.sumRatings / entry.totalRatings;
-    });
-
-    appData.summary = Array.from(summaryMap.values());
+    appData.summary = summary;
   } catch (error) {
     console.error("Unable to load summary data from Firebase:", error);
     appData.summary = [];
@@ -653,18 +642,59 @@ const handleStallSubmit = async (stallId) => {
     const reaction = reactionsMap[ratingValue] || "";
     const normalizedUserName = normalizeUserName(userInfo.name);
 
-    // Save rating to Firebase Firestore
-    await db.collection("ratings").add({
-      stallId: stallId,
+    // Create new rating object
+    // Note: Cannot use FieldValue.serverTimestamp() inside arrays
+    // Using regular Date object instead
+    const now = new Date();
+    const newRating = {
       stars: ratingValue,
       rating: ratingValue, // Alternative field name for compatibility
       userName: userInfo.name,
-      userNameNormalized: normalizedUserName, // Store normalized version for easier querying
+      userNameNormalized: normalizedUserName,
       userCourse: userInfo.course,
       reaction: reaction,
-      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      createdAt: new Date().toISOString(),
-    });
+      timestamp: now.toISOString(),
+      timestampMillis: now.getTime(), // Store as milliseconds for easy sorting
+      createdAt: now.toISOString(),
+    };
+
+    // Get or create stall document
+    const stallRef = db.collection("stalls").doc(stallId);
+    const stallDoc = await stallRef.get();
+
+    if (stallDoc.exists) {
+      // Update existing stall document
+      const stallData = stallDoc.data();
+      const ratings = stallData.ratings || [];
+      
+      // Add new rating to array
+      ratings.push(newRating);
+      
+      // Calculate new totals
+      const totalRatings = ratings.length;
+      const sumRatings = ratings.reduce((sum, r) => sum + (r.stars || r.rating || 0), 0);
+      const average = sumRatings / totalRatings;
+      
+      // Update the stall document
+      await stallRef.update({
+        ratings: ratings,
+        totalRatings: totalRatings,
+        sumRatings: sumRatings,
+        average: average,
+        lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+    } else {
+      // Create new stall document
+      await stallRef.set({
+        stallId: stallId,
+        ratings: [newRating],
+        totalRatings: 1,
+        sumRatings: ratingValue,
+        average: ratingValue,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+      });
+    }
 
     state.submittedStalls.add(stallId);
     saveToStorage();
@@ -961,19 +991,34 @@ const exportRatings = async () => {
   }
 
   try {
-    const ratingsSnapshot = await db.collection("ratings").get();
-    const allRatings = [];
+    // Get all stall documents
+    const stallsSnapshot = await db.collection("stalls").get();
+    const allStalls = [];
     
-    ratingsSnapshot.forEach((doc) => {
+    stallsSnapshot.forEach((doc) => {
       const data = doc.data();
-      allRatings.push({
+      allStalls.push({
         id: doc.id,
         ...data,
       });
     });
 
+    // Flatten ratings for backward compatibility
+    const allRatings = [];
+    allStalls.forEach((stall) => {
+      if (stall.ratings && Array.isArray(stall.ratings)) {
+        stall.ratings.forEach((rating) => {
+          allRatings.push({
+            ...rating,
+            stallId: stall.stallId || stall.id,
+          });
+        });
+      }
+    });
+
     const data = {
-      ratings: allRatings,
+      stalls: allStalls, // New structure: each stall as a document
+      ratings: allRatings, // Flattened for backward compatibility
       localRatings: state.ratings,
       submittedStalls: Array.from(state.submittedStalls),
       summary: appData.summary,
@@ -1006,14 +1051,15 @@ const resetRatings = async () => {
   if (db) {
     try {
       const batch = db.batch();
-      const ratingsSnapshot = await db.collection("ratings").get();
+      // Delete all stall documents (which contain all ratings)
+      const stallsSnapshot = await db.collection("stalls").get();
       
-      ratingsSnapshot.forEach((doc) => {
+      stallsSnapshot.forEach((doc) => {
         batch.delete(doc.ref);
       });
       
       await batch.commit();
-      console.log("All ratings deleted from Firebase");
+      console.log("All stalls and ratings deleted from Firebase");
     } catch (error) {
       console.error("Error deleting ratings from Firebase:", error);
       alert("Failed to delete ratings from Firebase. Check console for details.");
@@ -1062,10 +1108,22 @@ const findWinner = () => {
     const avg = entry.average ?? 0;
     if (votes === 0) return best;
 
-    if (!best) return entry;
+    // Calculate logarithmic score: Average × log10(votes + 10)
+    const score = avg * Math.log10(votes + 10);
 
-    if (avg > best.average) return entry;
-    if (avg === best.average && votes > (best.totalRatings || 0)) return entry;
+    if (!best) {
+      return { ...entry, score };
+    }
+
+    // Calculate best's score
+    const bestVotes = best.totalRatings || 0;
+    const bestAvg = best.average ?? 0;
+    const bestScore = bestAvg * Math.log10(bestVotes + 10);
+
+    // Compare scores
+    if (score > bestScore) return { ...entry, score };
+    // If scores are equal, prefer more votes
+    if (score === bestScore && votes > bestVotes) return { ...entry, score };
     return best;
   }, null);
 
