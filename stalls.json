@@ -9,7 +9,79 @@
         "team": "Parth & Group • Maa Bharti",
         "description": "Delicious chai and snacks to warm your heart.",
         "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIO2vbrCisdaCTGNWJpHDJ3OepkYYpiqNqoA&s"
-      }
+      },
+      
+        {
+          "id": "parth-group",
+          "name": "Chai",
+          "team": "Parth group",
+          "description": "Room 1, Board Electricity Corner",
+          "image": ""
+        },
+        {
+          "id": "aashima-group",
+          "name": "Sandwich",
+          "team": "Aashima group • Maa Bharti",
+          "description": "Electricity Corner",
+          "image":"sandwich.png"
+        },
+        {
+          "id": "saloni-nagar",
+          "name": "Katori Chaat ",
+          "team": "Saloni Nagar • Maa Bharti",
+          "description": "Window Side",
+          "image": ""
+        },
+        {
+          "id": "anand-nagar • Maa Bharti",
+          "name": "Bhel poori",
+          "team": "Anand Nagar • Maa Bharti",
+          "description": "Mid window",
+          "image": "anand.jpg"
+        },
+        {
+          "id": "mahima-dhakar",
+          "name": "Panipuri & Dahipuri",
+          "team": "Mahima Dhakar • Maa Bharti",
+          "description": "Room 2, White Board corner",
+          "image": "mahima.jpg"
+        },
+        {
+          "id": "chesta-sharma",
+          "name": "Coffee",
+          "team": "Chesta Sharma • Maa Bharti",
+          "description": "Room 2, Double window corner",
+          "image": "https://i.pinimg.com/736x/31/5d/45/315d45c273b664e7d9f8182fba729011.jpg"
+        },
+        {
+          "id": "kritika-singh",
+          "name": "Chana jor garam",
+          "team": "Kritika Singh • Maa Bharti",
+          "description": "Room 2, Window korner",
+          "image": "https://i.pinimg.com/736x/e5/b9/86/e5b986257009e8d033f2e203b32db649.jpg"
+        },
+        {
+          "id": "deepak-bairwa-aman-group",
+          "name": "Vada Pav",
+          "team": "Deepak Bairwa, Aman group • Maa Bharti",
+          "description": "Room 2, Electricity Corner",
+          "image": "https://i.pinimg.com/736x/0b/09/9b/0b099be98e5a8400911e5dffb2377d30.jpg"
+        },
+        {
+          "id": "bhuvi-meshwary",
+          "name": "Noodles",
+          "team": "Bhuvi Meshwary • Maa Bharti",
+          "description": "Room 2, elec. Corner, green Board",
+          "image": "noodels.png"
+        },
+        {
+          "id": "laxmi-komal-antima-raksha-group",
+          "name": "fruit chat",
+          "team": "Laxmi, Komal, Antima, Raksha group • Maa Bharti",
+          "description": "Room 2, white board corner",
+          "image": "https://i.pinimg.com/1200x/0b/84/e6/0b84e6c2f405373a6567a83c005ba2d4.jpg"
+        }
+      
     ]
   },
   {

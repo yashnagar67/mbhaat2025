@@ -309,7 +309,251 @@ const createStallCard = (stall, zone) => {
 
   card.append(body, status, description, bestBadge);
 
+  // Add swipe functionality
+  addSwipeHandlers(card, stall.id);
+
   return card;
+};
+
+// Swipe rating functionality
+const addSwipeHandlers = (card, stallId) => {
+  if (isStallSubmitted(stallId)) return; // Don't add swipe to submitted cards
+
+  let startX = 0;
+  let startY = 0;
+  let currentX = 0;
+  let currentY = 0;
+  let isSwiping = false;
+  let swipeDirection = null;
+
+  // Create swipe overlay for visual feedback
+  const swipeOverlay = document.createElement("div");
+  swipeOverlay.className = "swipe-overlay";
+  swipeOverlay.innerHTML = `
+    <div class="swipe-indicator swipe-indicator--right">
+      <span class="swipe-emoji">⭐</span>
+      <span class="swipe-text">5 Stars!</span>
+    </div>
+    <div class="swipe-indicator swipe-indicator--left">
+      <span class="swipe-emoji">😕</span>
+      <span class="swipe-text">1 Star</span>
+    </div>
+    <div class="swipe-indicator swipe-indicator--up">
+      <span class="swipe-emoji">👍</span>
+      <span class="swipe-text">4 Stars</span>
+    </div>
+    <div class="swipe-indicator swipe-indicator--down">
+      <span class="swipe-emoji">👎</span>
+      <span class="swipe-text">2 Stars</span>
+    </div>
+  `;
+  card.appendChild(swipeOverlay);
+
+  const handleStart = (clientX, clientY, target) => {
+    if (isStallSubmitted(stallId)) return;
+    
+    // Don't start swipe if clicking on interactive elements
+    if (target.closest('.star') || 
+        target.closest('.stall-card__submit') || 
+        target.closest('button') ||
+        target.closest('a')) {
+      return;
+    }
+    
+    startX = clientX;
+    startY = clientY;
+    isSwiping = false;
+    card.classList.add("swipe-active");
+  };
+
+  const handleMove = (clientX, clientY) => {
+    if (isStallSubmitted(stallId)) return;
+    
+    currentX = clientX - startX;
+    currentY = clientY - startY;
+    const distance = Math.sqrt(currentX * currentX + currentY * currentY);
+
+    if (distance > 10) {
+      isSwiping = true;
+      const angle = Math.atan2(currentY, currentX) * (180 / Math.PI);
+      
+      // Determine swipe direction
+      if (Math.abs(currentX) > Math.abs(currentY)) {
+        swipeDirection = currentX > 0 ? "right" : "left";
+      } else {
+        swipeDirection = currentY > 0 ? "down" : "up";
+      }
+
+      // Update card position and rotation
+      const rotation = currentX * 0.1;
+      card.style.transform = `translate(${currentX}px, ${currentY}px) rotate(${rotation}deg)`;
+      card.style.transition = "none";
+
+      // Show swipe indicator
+      swipeOverlay.classList.add("swipe-active");
+      swipeOverlay.classList.add(`swipe-${swipeDirection}`);
+      
+      // Calculate rating based on swipe distance and direction
+      const maxDistance = 150;
+      const normalizedDistance = Math.min(distance / maxDistance, 1);
+      
+      let rating = 0;
+      if (swipeDirection === "right") {
+        rating = Math.max(1, Math.round(3 + normalizedDistance * 2)); // 3-5 stars
+      } else if (swipeDirection === "up") {
+        rating = 4; // 4 stars
+      } else if (swipeDirection === "down") {
+        rating = 2; // 2 stars
+      } else if (swipeDirection === "left") {
+        rating = 1; // 1 star
+      }
+
+      // Update swipe indicator text
+      const indicator = swipeOverlay.querySelector(`.swipe-indicator--${swipeDirection}`);
+      if (indicator) {
+        const textEl = indicator.querySelector(".swipe-text");
+        if (swipeDirection === "right") {
+          textEl.textContent = `${rating} Stars! ⭐`;
+        } else if (swipeDirection === "up") {
+          textEl.textContent = "4 Stars 👍";
+        } else if (swipeDirection === "down") {
+          textEl.textContent = "2 Stars 👎";
+        } else {
+          textEl.textContent = "1 Star 😕";
+        }
+      }
+    }
+  };
+
+  const handleEnd = () => {
+    if (!isSwiping || isStallSubmitted(stallId)) {
+      resetCard();
+      return;
+    }
+
+    const distance = Math.sqrt(currentX * currentX + currentY * currentY);
+    const threshold = 80; // Minimum swipe distance
+
+    if (distance > threshold) {
+      // Calculate rating
+      const maxDistance = 150;
+      const normalizedDistance = Math.min(distance / maxDistance, 1);
+      
+      let rating = 0;
+      if (swipeDirection === "right") {
+        rating = Math.max(3, Math.round(3 + normalizedDistance * 2)); // 3-5 stars
+      } else if (swipeDirection === "up") {
+        rating = 4;
+      } else if (swipeDirection === "down") {
+        rating = 2;
+      } else if (swipeDirection === "left") {
+        rating = 1;
+      }
+
+      // Apply rating
+      if (rating > 0) {
+        state.ratings[stallId] = rating;
+        saveToStorage();
+        highlightSelectedStars();
+        updateReactions();
+        updateCardSubmissionState(stallId);
+        maybeShowBadge();
+        
+        // Animate card out
+        const exitX = swipeDirection === "right" ? window.innerWidth : 
+                     swipeDirection === "left" ? -window.innerWidth : currentX;
+        const exitY = swipeDirection === "up" ? -window.innerHeight :
+                     swipeDirection === "down" ? window.innerHeight : currentY;
+        
+        card.style.transform = `translate(${exitX}px, ${exitY}px) rotate(${currentX * 0.2}deg)`;
+        card.style.opacity = "0";
+        card.style.transition = "all 0.4s ease-out";
+        
+        setTimeout(() => {
+          resetCard();
+          card.style.opacity = "1";
+        }, 400);
+      } else {
+        resetCard();
+      }
+    } else {
+      resetCard();
+    }
+  };
+
+  const resetCard = () => {
+    card.style.transform = "";
+    card.style.transition = "";
+    card.style.opacity = "";
+    card.classList.remove("swipe-active");
+    swipeOverlay.classList.remove("swipe-active", "swipe-right", "swipe-left", "swipe-up", "swipe-down");
+    isSwiping = false;
+    startX = 0;
+    startY = 0;
+    currentX = 0;
+    currentY = 0;
+  };
+
+  // Touch events
+  card.addEventListener("touchstart", (e) => {
+    const touch = e.touches[0];
+    const target = document.elementFromPoint(touch.clientX, touch.clientY);
+    
+    // Don't prevent default if clicking on interactive elements
+    if (target && (target.closest('.star') || 
+                   target.closest('.stall-card__submit') || 
+                   target.closest('button'))) {
+      return;
+    }
+    
+    e.preventDefault();
+    handleStart(touch.clientX, touch.clientY, target);
+  }, { passive: false });
+
+  card.addEventListener("touchmove", (e) => {
+    if (!isSwiping && !card.classList.contains("swipe-active")) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    handleMove(touch.clientX, touch.clientY);
+  }, { passive: false });
+
+  card.addEventListener("touchend", (e) => {
+    if (!isSwiping && !card.classList.contains("swipe-active")) return;
+    e.preventDefault();
+    handleEnd();
+  }, { passive: false });
+
+  // Mouse events (for desktop)
+  card.addEventListener("mousedown", (e) => {
+    // Don't start swipe if clicking on interactive elements
+    if (e.target.closest('.star') || 
+        e.target.closest('.stall-card__submit') || 
+        e.target.closest('button') ||
+        e.target.closest('a')) {
+      return;
+    }
+    
+    e.preventDefault();
+    handleStart(e.clientX, e.clientY, e.target);
+    
+    const handleMouseMove = (e) => {
+      if (!isSwiping && !card.classList.contains("swipe-active")) {
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+        return;
+      }
+      handleMove(e.clientX, e.clientY);
+    };
+    
+    const handleMouseUp = () => {
+      handleEnd();
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+    
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  });
 };
 
 const renderStallCards = () => {

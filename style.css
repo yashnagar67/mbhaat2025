@@ -230,6 +230,14 @@ body.ui-body .stall-card {
   min-height: 160px;
   transition: all 0.3s ease;
   position: relative;
+  cursor: grab;
+  touch-action: pan-y pan-x;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body.ui-body .stall-card:active {
+  cursor: grabbing;
 }
 
 body.ui-body .stall-card:hover {
@@ -240,6 +248,126 @@ body.ui-body .stall-card:hover {
 body.ui-body .stall-card--submitted {
   background: linear-gradient(135deg, rgba(230, 255, 230, 0.98), rgba(240, 255, 240, 0.98));
   border-color: rgba(107, 203, 119, 0.5);
+}
+
+body.ui-body .stall-card.swipe-active {
+  cursor: grabbing;
+  z-index: 100;
+  user-select: none;
+}
+
+body.ui-body .stall-card.swipe-active:hover {
+  transform: none;
+}
+
+/* Swipe Overlay */
+.swipe-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.swipe-overlay.swipe-active {
+  opacity: 1;
+}
+
+.swipe-indicator {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+  border-radius: 20px;
+  font-family: "Comic Neue", cursive;
+  font-weight: 700;
+  font-size: 1.2rem;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.swipe-indicator--right {
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%) scale(0.8);
+  background: linear-gradient(135deg, rgba(107, 203, 119, 0.95), rgba(76, 175, 80, 0.95));
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(107, 203, 119, 0.4);
+}
+
+.swipe-overlay.swipe-right .swipe-indicator--right {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+.swipe-indicator--left {
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%) scale(0.8);
+  background: linear-gradient(135deg, rgba(239, 83, 80, 0.95), rgba(229, 57, 53, 0.95));
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(239, 83, 80, 0.4);
+}
+
+.swipe-overlay.swipe-left .swipe-indicator--left {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+.swipe-indicator--up {
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.8);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.95), rgba(118, 75, 162, 0.95));
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+}
+
+.swipe-overlay.swipe-up .swipe-indicator--up {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+.swipe-indicator--down {
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.8);
+  background: linear-gradient(135deg, rgba(255, 140, 66, 0.95), rgba(255, 152, 0, 0.95));
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(255, 140, 66, 0.4);
+}
+
+.swipe-overlay.swipe-down .swipe-indicator--down {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+.swipe-emoji {
+  font-size: 2.5rem;
+  display: block;
+  animation: bounce 0.6s ease infinite;
+}
+
+.swipe-text {
+  font-size: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
 }
 
 body.ui-body .stall-card:nth-child(2n) {
