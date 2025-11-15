@@ -125,6 +125,14 @@
         "team": "Arjun Prajapati • Maa Bharti",
         "description": "Retro joysticks, neon vibes, endless high scores.",
         "image": "assets/stalls/arcade-arena.jpg"
+      },
+    
+      {
+        "id": "Candel & Bucket",
+        "name": "Arcade Arena",
+        "team": "Ayush & Group • Maa Bharti",
+        "description": "Retro joysticks, neon vibes, endless high scores.",
+        "image": "assets/stalls/arcade-arena.jpg"
       }
     
     ]
