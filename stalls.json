@@ -11,13 +11,7 @@
         "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRIO2vbrCisdaCTGNWJpHDJ3OepkYYpiqNqoA&s"
       },
       
-        {
-          "id": "parth-group",
-          "name": "Chai",
-          "team": "Parth group",
-          "description": "Room 1, Board Electricity Corner",
-          "image": ""
-        },
+      
         {
           "id": "aashima-group",
           "name": "Sandwich",
@@ -89,9 +83,39 @@
     "title": "Game Zone",
     "stalls": [
       {
-        "id": "arcade-arena",
+        "id": "Game1",
         "name": "Arcade Arena",
-        "team": "Game Guild • BCA 1st Year",
+        "team": "Yash & Group • Maa Bharti",
+        "description": "Retro joysticks, neon vibes, endless high scores.",
+        "image": "assets/stalls/arcade-arena.jpg"
+      },
+      {
+        "id": "Game2",
+        "name": "Arcade Arena",
+        "team": "kavyanshi & Group • BCA 1st Year",
+        "description": "Retro joysticks, neon vibes, endless high scores.",
+        "image": "assets/stalls/arcade-arena.jpg"
+      },
+      {
+        "id": "Game3",
+        "name": "Arcade Arena",
+        "team": "Ayush & Group • BCA 1st Year",
+        "description": "Retro joysticks, neon vibes, endless high scores.",
+        "image": "assets/stalls/arcade-arena.jpg"
+      },
+    
+      {
+        "id": "Game3",
+        "name": "Arcade Arena",
+        "team": "Ayush & Group • BCA 1st Year",
+        "description": "Retro joysticks, neon vibes, endless high scores.",
+        "image": "assets/stalls/arcade-arena.jpg"
+      },
+    
+      {
+        "id": "Game3",
+        "name": "Arcade Arena",
+        "team": "Ayush & Group • BCA 1st Year",
         "description": "Retro joysticks, neon vibes, endless high scores.",
         "image": "assets/stalls/arcade-arena.jpg"
       }
@@ -103,13 +127,26 @@
     "title": "Handicraft Zone",
     "stalls": [
       {
-        "id": "artsy-aura",
-        "name": "Artsy Aura",
-        "team": "Design Hive • BFA 1st Year",
-        "description": "Handcrafted threads woven with love and flair.",
-        "image": "assets/stalls/artsy-aura.jpg"
+        "id": "kashish",
+        "name": "Jewellery",
+        "team": "Kashish (BCA III sem)",
+        "description": "Room 3, electricity green corner",
+        "image": ""
+      },
+      {
+        "id": "manish",
+        "name": "Perfumes (itry)",
+        "team": "Manish (BCA II sem)",
+        "description": "Room 3, electricity corner",
+        "image": ""
+      },
+      {
+        "id": "jain-jai-shree-masale-shivanshu",
+        "name": "Jai shree masale",
+        "team": "Jain (Jai shree masale), (shivanshu) BCA 2",
+        "description": "Room 3, window corner",
+        "image": ""
       }
-    
     ]
   }
 ]
