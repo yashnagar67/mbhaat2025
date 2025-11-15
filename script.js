@@ -1004,6 +1004,7 @@ const adminElements = {
   resetBtn: null,
   unlockBtn: null,
   exportBtn: null,
+  exportVisitsBtn: null,
   winnerBtn: null,
 };
 
@@ -1035,6 +1036,7 @@ const cacheAdminElements = () => {
   adminElements.resetBtn = document.getElementById("resetRatings");
   adminElements.unlockBtn = document.getElementById("unlockFeedback");
   adminElements.exportBtn = document.getElementById("exportRatings");
+  adminElements.exportVisitsBtn = document.getElementById("exportVisits");
   adminElements.winnerBtn = document.getElementById("revealWinner");
 };
 
@@ -1226,6 +1228,63 @@ const handleAdminLogin = async (event) => {
   }
 
   setAdminError("Incorrect username or password. Try again.");
+};
+
+const exportWebsiteVisits = async () => {
+  if (!db) {
+    alert("Firebase not configured. Cannot export visits.");
+    return;
+  }
+
+  try {
+    // Get all visit documents, ordered by last visit time
+    const visitsSnapshot = await db.collection("website_visits").orderBy("lastVisitTimestampMillis", "desc").get();
+    const allVisits = [];
+    let totalUniqueUsers = 0;
+    let totalAllVisits = 0;
+    
+    visitsSnapshot.forEach((doc) => {
+      const data = doc.data();
+      totalUniqueUsers++;
+      totalAllVisits += (data.totalVisits || 0);
+      
+      allVisits.push({
+        documentId: doc.id, // This is the normalized username
+        userName: data.userName || '',
+        userCourse: data.userCourse || '',
+        totalVisits: data.totalVisits || 0,
+        lastVisitTimestamp: data.lastVisitTimestamp || '',
+        lastVisitTimestampISO: data.lastVisitTimestampISO || '',
+      });
+    });
+
+    const exportData = {
+      summary: {
+        totalUniqueUsers: totalUniqueUsers,
+        totalAllVisits: totalAllVisits,
+        exportedAt: new Date().toISOString(),
+        exportedAtUTC: new Date().toUTCString(),
+      },
+      visits: allVisits,
+    };
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `mbhaat-website-visits-${Date.now()}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    alert(`Exported ${totalUniqueUsers} unique user(s) with ${totalAllVisits} total visit(s)!`);
+  } catch (error) {
+    console.error("Export visits error:", error);
+    alert("Failed to export visits. Check console for details.");
+  }
 };
 
 const exportRatings = async () => {
@@ -1473,6 +1532,7 @@ const attachAdminHandlers = () => {
     unlockFeedbackFromAdmin
   );
   adminElements.exportBtn?.addEventListener("click", exportRatings);
+  adminElements.exportVisitsBtn?.addEventListener("click", exportWebsiteVisits);
   adminElements.winnerBtn?.addEventListener("click", triggerWinnerReveal);
 
   document.addEventListener("keydown", (event) => {
@@ -1679,6 +1739,89 @@ const startCountdown = () => {
   setInterval(updateCountdown, 1000);
 };
 
+// Track page visit and store in Firebase
+const trackPageVisit = async () => {
+  try {
+    if (!db) {
+      console.warn("Firebase not initialized, cannot track visit");
+      return;
+    }
+
+    // Get user info from localStorage
+    const userInfo = getUserInfo();
+    
+    // Check if we have a username (required for document ID)
+    if (!userInfo || !userInfo.name) {
+      console.warn("No user name found in localStorage, cannot track visit");
+      return;
+    }
+
+    const userName = String(userInfo.name).trim();
+    if (!userName) {
+      console.warn("User name is empty, cannot track visit");
+      return;
+    }
+
+    // Use normalized username as document ID
+    const docId = normalizeUserName(userName);
+    
+    // Get current document to update visit count
+    const userVisitRef = db.collection("website_visits").doc(docId);
+    const userVisitDoc = await userVisitRef.get();
+    
+    // Calculate total visits (increment if document exists)
+    const currentTotalVisits = userVisitDoc.exists ? (userVisitDoc.data().totalVisits || 0) : 0;
+    const newTotalVisits = currentTotalVisits + 1;
+    
+    // Get current time
+    const now = new Date();
+    
+    // Format local time in same format as UTC string (e.g., "Sat, 15 Nov 2025 09:31:36 GMT")
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const dayName = days[now.getDay()];
+    const monthName = months[now.getMonth()];
+    const day = String(now.getDate()).padStart(2, '0');
+    const year = now.getFullYear();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    
+    // Get timezone offset and format it
+    const timezoneOffset = -now.getTimezoneOffset();
+    const offsetHours = Math.floor(Math.abs(timezoneOffset) / 60);
+    const offsetMinutes = Math.abs(timezoneOffset) % 60;
+    const offsetSign = timezoneOffset >= 0 ? '+' : '-';
+    const timezoneString = `${offsetSign}${String(offsetHours).padStart(2, '0')}${String(offsetMinutes).padStart(2, '0')}`;
+    
+    // Format: "Sat, 15 Nov 2025 09:31:36 +0530" (local time with timezone)
+    const localTimestamp = `${dayName}, ${day} ${monthName} ${year} ${hours}:${minutes}:${seconds} ${timezoneString}`;
+    
+    // Also keep UTC timestamp for reference
+    const utcTimestampISO = now.toISOString();
+    
+    // Prepare data with only useful info
+    const visitData = {
+      userName: userName,
+      userCourse: userInfo.course || '',
+      totalVisits: newTotalVisits,
+      lastVisitTimestamp: localTimestamp, // Local time normalized to user's timezone
+      lastVisitTimestampISO: utcTimestampISO, // UTC timestamp for reference
+      lastVisitTimestampMillis: now.getTime(),
+      // Update timestamp for sorting
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+
+    // Use set with merge to update existing document or create new one
+    await userVisitRef.set(visitData, { merge: true });
+    
+    console.log(`Page visit tracked for ${userName} (Total visits: ${newTotalVisits})`);
+  } catch (error) {
+    console.error("Error tracking page visit:", error);
+    // Don't throw error, just log it so it doesn't break the page
+  }
+};
+
 // Update participant message with username
 const updateParticipantMessage = () => {
   try {
@@ -1731,6 +1874,12 @@ const initApp = async () => {
     // Wait a bit for Firebase to initialize
     await new Promise(resolve => setTimeout(resolve, 100));
   }
+
+  // Track page visit (after event completed)
+  // Wait a bit more to ensure Firebase is ready
+  setTimeout(async () => {
+    await trackPageVisit();
+  }, 500);
 
   // Update participant message with username (run after DOM is ready)
   updateParticipantMessage();
