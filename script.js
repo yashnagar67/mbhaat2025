@@ -1614,6 +1614,71 @@ const handleSubmitAllRatings = async () => {
   }, 5000);
 };
 
+// Get next Monday at 00:00:00
+const getNextMonday = () => {
+  const now = new Date();
+  const dayOfWeek = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
+  
+  // Calculate days until next Monday
+  let daysUntilMonday;
+  if (dayOfWeek === 0) {
+    // If today is Sunday, next Monday is tomorrow
+    daysUntilMonday = 1;
+  } else if (dayOfWeek === 1) {
+    // If today is Monday, check if it's past midnight
+    const hours = now.getHours();
+    if (hours === 0 && now.getMinutes() === 0 && now.getSeconds() === 0) {
+      daysUntilMonday = 0; // It's exactly Monday 00:00:00
+    } else {
+      daysUntilMonday = 7; // Next Monday is 7 days away
+    }
+  } else {
+    // For Tuesday-Saturday, calculate days until next Monday
+    daysUntilMonday = 8 - dayOfWeek;
+  }
+  
+  const nextMonday = new Date(now);
+  nextMonday.setDate(now.getDate() + daysUntilMonday);
+  nextMonday.setHours(0, 0, 0, 0); // Set to midnight
+  
+  return nextMonday;
+};
+
+// Countdown timer function
+const startCountdown = () => {
+  const targetDate = getNextMonday();
+  
+  const updateCountdown = () => {
+    const now = new Date();
+    const difference = targetDate - now;
+    
+    if (difference <= 0) {
+      // Countdown finished
+      document.getElementById("days").textContent = "00";
+      document.getElementById("hours").textContent = "00";
+      document.getElementById("minutes").textContent = "00";
+      document.getElementById("seconds").textContent = "00";
+      return;
+    }
+    
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+    
+    document.getElementById("days").textContent = String(days).padStart(2, "0");
+    document.getElementById("hours").textContent = String(hours).padStart(2, "0");
+    document.getElementById("minutes").textContent = String(minutes).padStart(2, "0");
+    document.getElementById("seconds").textContent = String(seconds).padStart(2, "0");
+  };
+  
+  // Update immediately
+  updateCountdown();
+  
+  // Update every second
+  setInterval(updateCountdown, 1000);
+};
+
 const initApp = async () => {
   // Ensure Firebase is initialized
   if (typeof firebase !== 'undefined' && !db) {
@@ -1622,19 +1687,11 @@ const initApp = async () => {
     await new Promise(resolve => setTimeout(resolve, 100));
   }
 
-  cacheUserElements();
-  ensureUserProfile();
-  await loadStallsConfig();
-  renderStallCards();
-  pruneUnknownRatings();
-  hydrateView();
-  initAdminPanel();
+  // Start countdown timer
+  startCountdown();
   
-  // Attach main submit button handler
-  const submitBtn = document.getElementById("submitFeedback");
-  if (submitBtn) {
-    submitBtn.addEventListener("click", handleSubmitAllRatings);
-  }
+  // Initialize admin panel (still available for admin access)
+  initAdminPanel();
   
   // Load summary from Firebase if available
   if (db) {

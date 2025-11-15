@@ -50,41 +50,82 @@
           Admin Panel
         </button>
         <p class="hero__spark ui-title">MB HAAT 2025 —</p>
-        <h1 class="hero__headline ui-subtitle">Feedback Portal</h1>
+        <h1 class="hero__headline ui-subtitle">Event Completed! 🎉</h1>
         <p class="hero__subtitle ui-tagline">
-          Your opinion adds spice to our event!
-          <span aria-hidden="true">🌶️🌶️</span>
+          Thank you for participating!
+          <span aria-hidden="true">✨✨</span>
         </p>
         <p class="hero__note ui-note">
-          Give shimmering stars to every stall you love and help the fiesta glow brighter. ⭐
+          Stay tuned for the winner announcement! 🏆
         </p>
       </header>
 
-      <section class="ratings ui-card-stack" id="ratings">
-        <article class="zone-card" data-zone="food">
-          <h2>🥘 Food Zone</h2>
-          <p class="zone-card__hint">Taste the vibes! Rate each stall. 💡 Swipe cards to rate quickly!</p>
-          <div class="stall-list" data-zone="food"></div>
+      <section class="winner-announcement ui-card-stack" id="winnerAnnouncement">
+        <article class="announcement-card">
+          <div class="announcement-icon">🏆</div>
+          <h2 class="announcement-title">Winner Announcement</h2>
+          <p class="announcement-message">
+            The winner will be declared on <strong>Monday</strong>! 🎉
+          </p>
+          <div class="countdown-container">
+            <p class="countdown-label">Time until announcement:</p>
+            <div class="countdown-timer" id="countdownTimer">
+              <div class="countdown-item">
+                <span class="countdown-value" id="days">00</span>
+                <span class="countdown-label-small">Days</span>
+              </div>
+              <div class="countdown-separator">:</div>
+              <div class="countdown-item">
+                <span class="countdown-value" id="hours">00</span>
+                <span class="countdown-label-small">Hours</span>
+              </div>
+              <div class="countdown-separator">:</div>
+              <div class="countdown-item">
+                <span class="countdown-value" id="minutes">00</span>
+                <span class="countdown-label-small">Minutes</span>
+              </div>
+              <div class="countdown-separator">:</div>
+              <div class="countdown-item">
+                <span class="countdown-value" id="seconds">00</span>
+                <span class="countdown-label-small">Seconds</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="top-contenders">
+            <h3 class="contenders-title">🏅 Top Contenders</h3>
+            <p class="contenders-subtitle">All have overall ratings of 400+ ⭐</p>
+            <p class="contenders-note">Winner will be from one of these:</p>
+            <div class="contenders-list">
+              <div class="contender-item">
+                <span class="contender-emoji">☕</span>
+                <div class="contender-info">
+                  <span class="contender-name">Parth & Group</span>
+                  <span class="contender-stall">ChaiWala</span>
+                </div>
+              </div>
+              <div class="contender-item">
+                <span class="contender-emoji">🥪</span>
+                <div class="contender-info">
+                  <span class="contender-name">Aashima & Group</span>
+                  <span class="contender-stall">Sandwichwale</span>
+                </div>
+              </div>
+              <div class="contender-item">
+                <span class="contender-emoji">☕</span>
+                <div class="contender-info">
+                  <span class="contender-name">Chesta & Group</span>
+                  <span class="contender-stall">Coffee Wale</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="thanks-message">
+            <p>We thank all the students that rated! 🙏</p>
+            <p class="developer-credit">Developer: <strong>Yash Nagar</strong></p>
+          </div>
         </article>
-
-        <article class="zone-card" data-zone="games">
-          <h2>🎯 Game Zone</h2>
-          <p class="zone-card__hint">Rate the thrill! Did you hit the bullseye? 💡 Swipe cards to rate quickly!</p>
-          <div class="stall-list" data-zone="games"></div>
-        </article>
-
-        <article class="zone-card" data-zone="crafts">
-          <h2>🎨 Handicraft Zone</h2>
-          <p class="zone-card__hint">Show love for the handmade magic. 💡 Swipe cards to rate quickly!</p>
-          <div class="stall-list" data-zone="crafts"></div>
-        </article>
-      </section>
-
-      <section class="submit-box ui-submit">
-        <button class="submit-btn" id="submitFeedback">
-          Submit My Ratings 🍜🎯🎨
-        </button>
-        <p class="status-message" id="statusMessage"></p>
       </section>
     </main>
 
