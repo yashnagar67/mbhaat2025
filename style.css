@@ -43,18 +43,21 @@ body {
   font-family: "Patrick Hand", cursive;
   background: linear-gradient(180deg, #56ccf2 0%, #2f80ed 50%, #b2fefa 100%);
   display: block;
-  padding: 32px 16px 80px;
+  padding: clamp(20px, 4vw, 32px) clamp(12px, 3vw, 16px) clamp(50px, 8vw, 80px);
   overflow-x: hidden;
   min-height: 100vh;
   position: relative;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .ui-shell {
   max-width: 420px;
   margin: 0 auto;
   background: transparent;
-  padding: 32px 12px 72px;
-  gap: 28px;
+  padding: 24px 12px 60px;
+  gap: 24px;
+  width: 100%;
 }
 
 .ui-hero {
@@ -80,10 +83,13 @@ body {
 
 .ui-tagline {
   font-family: "Comic Neue", cursive;
-  font-size: 1.2rem;
+  font-size: clamp(1rem, 4vw, 1.2rem);
   color: #2d3748;
   font-weight: 700;
   margin-top: 12px;
+  line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .ui-note {
@@ -122,13 +128,15 @@ body {
 
 .announcement-card {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 251, 240, 0.98));
-  border-radius: 30px;
-  padding: 40px 28px;
+  border-radius: 24px;
+  padding: clamp(24px, 5vw, 40px) clamp(20px, 4vw, 28px);
   border: 3px solid rgba(255, 217, 61, 0.3);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
   text-align: center;
   position: relative;
   overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .announcement-card::before {
@@ -180,12 +188,16 @@ body {
 
 .announcement-message {
   font-family: "Comic Neue", cursive;
-  font-size: clamp(1.2rem, 3vw, 1.5rem);
+  font-size: clamp(1rem, 3.5vw, 1.5rem);
   color: #2d3748;
   font-weight: 700;
-  margin-bottom: 32px;
+  margin-bottom: clamp(24px, 4vw, 32px);
   position: relative;
   z-index: 1;
+  line-height: 1.5;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  padding: 0 4px;
 }
 
 .announcement-message strong {
@@ -194,6 +206,13 @@ body {
 }
 
 /* Highlight name in participant message */
+#participantMessage {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  max-width: 100%;
+}
+
 #participantMessage strong {
   color: #ff8c42 !important;
   text-shadow: 0 2px 4px rgba(255, 140, 66, 0.3) !important;
@@ -202,6 +221,8 @@ body {
   display: inline-block;
   animation: nameBounce 2s ease-in-out infinite;
   transform-origin: center;
+  word-break: break-word;
+  max-width: 100%;
 }
 
 @keyframes nameBounce {
@@ -231,23 +252,29 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: clamp(6px, 2vw, 12px);
   flex-wrap: wrap;
   margin-top: 20px;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .countdown-item {
   background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
-  border-radius: 20px;
-  padding: 20px 16px;
-  min-width: 80px;
+  border-radius: clamp(16px, 3vw, 20px);
+  padding: clamp(14px, 3vw, 20px) clamp(12px, 2.5vw, 16px);
+  min-width: clamp(60px, 15vw, 80px);
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: clamp(6px, 1.5vw, 8px);
   border: 2px solid rgba(102, 126, 234, 0.3);
   box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
   transition: all 0.3s ease;
+  flex: 0 1 auto;
+  box-sizing: border-box;
 }
 
 .countdown-item:hover {
@@ -275,10 +302,11 @@ body {
 
 .countdown-separator {
   font-family: "Fredoka One", cursive;
-  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  font-size: clamp(1.2rem, 4vw, 2.2rem);
   color: #ff8c42;
   font-weight: 700;
-  margin: 0 4px;
+  margin: 0 clamp(2px, 1vw, 4px);
+  flex-shrink: 0;
 }
 
 /* Top Contenders Styles */
@@ -325,16 +353,19 @@ body {
 
 .contender-item {
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 248, 225, 0.9));
-  border-radius: 18px;
-  padding: 18px 20px;
+  border-radius: clamp(14px, 3vw, 18px);
+  padding: clamp(14px, 3vw, 18px) clamp(16px, 3.5vw, 20px);
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: clamp(12px, 3vw, 16px);
   border: 2px solid rgba(102, 126, 234, 0.2);
   box-shadow: 0 6px 18px rgba(102, 126, 234, 0.15);
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+  flex-wrap: wrap;
 }
 
 .contender-item::before {
@@ -374,9 +405,12 @@ body {
 
 .contender-name {
   font-family: "Comic Neue", cursive;
-  font-size: 1.1rem;
+  font-size: clamp(0.95rem, 3vw, 1.1rem);
   font-weight: 700;
   color: #2d3748;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.3;
 }
 
 .contender-stall {
@@ -431,65 +465,129 @@ body {
 }
 
 @media (max-width: 600px) {
+  body.ui-body {
+    padding: 20px 10px 50px;
+  }
+  
+  .ui-shell {
+    padding: 20px 10px 50px;
+    gap: 20px;
+  }
+  
+  .ui-hero {
+    padding-top: 20px;
+    margin-bottom: 12px;
+  }
+  
   .announcement-card {
-    padding: 32px 20px;
+    padding: 24px 16px;
+    border-radius: 20px;
   }
   
   .announcement-icon {
-    font-size: 4rem;
+    font-size: clamp(3.5rem, 12vw, 4rem);
+    margin-bottom: 16px;
+  }
+  
+  .announcement-title {
+    font-size: clamp(1.6rem, 7vw, 2rem);
+    margin-bottom: 12px;
   }
   
   .countdown-timer {
-    gap: 8px;
+    gap: 6px;
+    margin-top: 16px;
   }
   
   .countdown-item {
-    min-width: 70px;
-    padding: 16px 12px;
+    min-width: 60px;
+    padding: 12px 10px;
+    border-radius: 14px;
   }
   
   .countdown-value {
-    font-size: 1.8rem;
+    font-size: clamp(1.5rem, 6vw, 1.8rem);
+  }
+  
+  .countdown-label-small {
+    font-size: clamp(0.7rem, 2.5vw, 0.85rem);
   }
   
   .countdown-separator {
-    font-size: 1.5rem;
+    font-size: clamp(1rem, 5vw, 1.5rem);
     margin: 0 2px;
   }
   
+  .countdown-label {
+    font-size: clamp(0.95rem, 3vw, 1.1rem);
+    margin-bottom: 16px;
+  }
+  
   .top-contenders {
-    margin-top: 32px;
-    padding-top: 24px;
-  }
-  
-  .contender-item {
-    padding: 14px 16px;
-    gap: 12px;
-  }
-  
-  .contender-emoji {
-    font-size: 2rem;
-  }
-  
-  .contender-name {
-    font-size: 1rem;
-  }
-  
-  .contender-stall {
-    font-size: 0.85rem;
-  }
-  
-  .contender-rating {
-    font-size: 1rem;
-  }
-  
-  .thanks-message {
     margin-top: 24px;
     padding-top: 20px;
   }
   
+  .contenders-title {
+    font-size: clamp(1.3rem, 5vw, 1.5rem);
+    margin-bottom: 10px;
+  }
+  
+  .contenders-subtitle {
+    font-size: clamp(0.95rem, 3vw, 1.1rem);
+    margin-bottom: 6px;
+  }
+  
+  .contenders-note {
+    font-size: clamp(0.85rem, 2.8vw, 1rem);
+    margin-bottom: 20px;
+  }
+  
+  .contender-item {
+    padding: 12px 14px;
+    gap: 10px;
+    border-radius: 14px;
+  }
+  
+  .contender-emoji {
+    font-size: clamp(1.8rem, 6vw, 2rem);
+  }
+  
+  .contender-name {
+    font-size: clamp(0.9rem, 3vw, 1rem);
+  }
+  
+  .contender-stall {
+    font-size: clamp(0.8rem, 2.5vw, 0.85rem);
+  }
+  
+  .thanks-message {
+    margin-top: 20px;
+    padding-top: 16px;
+  }
+  
   .thanks-message p {
-    font-size: 1rem;
+    font-size: clamp(0.9rem, 3vw, 1.1rem);
+    line-height: 1.5;
+  }
+  
+  .developer-credit {
+    font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+  }
+  
+  /* Fix text overflow */
+  #participantMessage {
+    font-size: clamp(0.95rem, 3.5vw, 1.2rem) !important;
+    line-height: 1.5 !important;
+    padding: 0 8px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  #participantMessage strong {
+    font-size: clamp(1.1em, 4vw, 1.3em) !important;
+    display: inline-block;
+    word-break: break-word;
   }
 }
 
