@@ -92,22 +92,14 @@
       {
         "id": "Game2",
         "name": "Arcade Arena",
-        "team": "kavyanshi & Group • BCA 1st Year",
+        "team": "kavyanshi & Group • Maa ",
         "description": "Retro joysticks, neon vibes, endless high scores.",
         "image": "assets/stalls/arcade-arena.jpg"
       },
       {
         "id": "Game3",
         "name": "Arcade Arena",
-        "team": "Ayush & Group • BCA 1st Year",
-        "description": "Retro joysticks, neon vibes, endless high scores.",
-        "image": "assets/stalls/arcade-arena.jpg"
-      },
-    
-      {
-        "id": "Game3",
-        "name": "Arcade Arena",
-        "team": "Ayush & Group • BCA 1st Year",
+        "team": "Ayush & Group • Maa Bharti",
         "description": "Retro joysticks, neon vibes, endless high scores.",
         "image": "assets/stalls/arcade-arena.jpg"
       },
@@ -115,7 +107,15 @@
       {
         "id": "Game3",
         "name": "Arcade Arena",
-        "team": "Ayush & Group • BCA 1st Year",
+        "team": "Ayush & Group • Maa Bharti",
+        "description": "Retro joysticks, neon vibes, endless high scores.",
+        "image": "assets/stalls/arcade-arena.jpg"
+      },
+    
+      {
+        "id": "Game5",
+        "name": "Arcade Arena",
+        "team": "Gorav • Maa Bharti",
         "description": "Retro joysticks, neon vibes, endless high scores.",
         "image": "assets/stalls/arcade-arena.jpg"
       }
