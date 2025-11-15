@@ -118,6 +118,13 @@
         "team": "Gorav • Maa Bharti",
         "description": "Retro joysticks, neon vibes, endless high scores.",
         "image": "assets/stalls/arcade-arena.jpg"
+      },
+      {
+        "id": "Bottel Up",
+        "name": "Arcade Arena",
+        "team": "Arjun Prajapati • Maa Bharti",
+        "description": "Retro joysticks, neon vibes, endless high scores.",
+        "image": "assets/stalls/arcade-arena.jpg"
       }
     
     ]
