@@ -1679,6 +1679,51 @@ const startCountdown = () => {
   setInterval(updateCountdown, 1000);
 };
 
+// Update participant message with username
+const updateParticipantMessage = () => {
+  try {
+    const participantMessage = document.getElementById("participantMessage");
+    if (!participantMessage) {
+      console.warn("Participant message element not found");
+      return;
+    }
+    
+    // Directly access localStorage with the key "mbhaat-user-info"
+    let userInfo = null;
+    try {
+      const raw = localStorage.getItem("mbhaat-user-info");
+      if (raw) {
+        userInfo = JSON.parse(raw);
+      }
+    } catch (e) {
+      console.error("Error reading from localStorage:", e);
+    }
+    
+    console.log("Raw localStorage:", localStorage.getItem("mbhaat-user-info"));
+    console.log("Parsed userInfo:", userInfo);
+    
+    // Check if userInfo exists and has a name property
+    if (userInfo && userInfo.name) {
+      const userName = String(userInfo.name).trim();
+      if (userName) {
+        participantMessage.innerHTML = `Thanks <strong style="color: #ff8c42; text-shadow: 0 2px 4px rgba(255, 140, 66, 0.3); font-size: 1.3em;">${userName}</strong>, for participating! <span aria-hidden="true">✨✨</span>`;
+        console.log("Successfully updated with name:", userName);
+        return;
+      }
+    }
+    
+    // Fallback if no user info found or name is empty
+    console.log("No user name found, using fallback");
+    participantMessage.innerHTML = `Thank you for participating! <span aria-hidden="true">✨✨</span>`;
+  } catch (error) {
+    console.error("Error in updateParticipantMessage:", error);
+    const participantMessage = document.getElementById("participantMessage");
+    if (participantMessage) {
+      participantMessage.innerHTML = `Thank you for participating! <span aria-hidden="true">✨✨</span>`;
+    }
+  }
+};
+
 const initApp = async () => {
   // Ensure Firebase is initialized
   if (typeof firebase !== 'undefined' && !db) {
@@ -1687,6 +1732,9 @@ const initApp = async () => {
     await new Promise(resolve => setTimeout(resolve, 100));
   }
 
+  // Update participant message with username (run after DOM is ready)
+  updateParticipantMessage();
+  
   // Start countdown timer
   startCountdown();
   
@@ -1699,7 +1747,25 @@ const initApp = async () => {
   }
 };
 
-document.addEventListener("DOMContentLoaded", () => {
+// Run when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener("DOMContentLoaded", () => {
+    initApp();
+  });
+} else {
+  // DOM is already loaded
   initApp();
+}
+
+// Also try to update on window load
+window.addEventListener('load', () => {
+  updateParticipantMessage();
 });
+
+// Try updating immediately if script loads after DOM
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  setTimeout(() => {
+    updateParticipantMessage();
+  }, 100);
+}
 

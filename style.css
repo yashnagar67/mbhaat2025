@@ -193,6 +193,26 @@ body {
   font-size: 1.2em;
 }
 
+/* Highlight name in participant message */
+#participantMessage strong {
+  color: #ff8c42 !important;
+  text-shadow: 0 2px 4px rgba(255, 140, 66, 0.3) !important;
+  font-weight: 700;
+  font-size: 1.3em !important;
+  display: inline-block;
+  animation: nameBounce 2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+@keyframes nameBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
 .countdown-container {
   margin-top: 32px;
   position: relative;

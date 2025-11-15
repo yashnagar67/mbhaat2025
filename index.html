@@ -51,7 +51,7 @@
         </button>
         <p class="hero__spark ui-title">MB HAAT 2025 —</p>
         <h1 class="hero__headline ui-subtitle">Event Completed! 🎉</h1>
-        <p class="hero__subtitle ui-tagline">
+        <p class="hero__subtitle ui-tagline" id="participantMessage">
           Thank you for participating!
           <span aria-hidden="true">✨✨</span>
         </p>
@@ -230,6 +230,42 @@
     </div>
 
     <script src="script.js"></script>
+    <script>
+      // Immediate update of participant message
+      (function() {
+        function updateMessage() {
+          const element = document.getElementById("participantMessage");
+          if (!element) return;
+          
+          try {
+            const raw = localStorage.getItem("mbhaat-user-info");
+            if (raw) {
+              const userInfo = JSON.parse(raw);
+              if (userInfo && userInfo.name) {
+                const name = String(userInfo.name).trim();
+                if (name) {
+                  element.innerHTML = `Thanks <strong style="color: #ff8c42; text-shadow: 0 2px 4px rgba(255, 140, 66, 0.3); font-size: 1.3em;">${name}</strong>, for participating! <span aria-hidden="true">✨✨</span>`;
+                  return;
+                }
+              }
+            }
+          } catch (e) {
+            console.error("Error updating message:", e);
+          }
+        }
+        
+        // Try immediately
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', updateMessage);
+        } else {
+          updateMessage();
+        }
+        
+        // Also try after a short delay
+        setTimeout(updateMessage, 500);
+        window.addEventListener('load', updateMessage);
+      })();
+    </script>
   </body>
 </html>
 
