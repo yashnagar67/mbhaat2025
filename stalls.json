@@ -24,42 +24,42 @@
           "name": "Katori Chaat ",
           "team": "Saloni Nagar • Maa Bharti",
           "description": "Window Side",
-          "image": ""
+          "image": "https://i.pinimg.com/736x/ae/33/0f/ae330fd1e15f5f639e504d6776bdafcc.jpg"
         },
         {
           "id": "anand-nagar • Maa Bharti",
-          "name": "Bhel poori",
+          "name": "Bhelpoori",
           "team": "Anand Nagar • Maa Bharti",
           "description": "Mid window",
-          "image": "anand.jpg"
+          "image": "https://i.pinimg.com/736x/17/0b/e3/170be31f2b1cd38d5393f781f8c3dc47.jpg"
         },
         {
           "id": "mahima-dhakar",
           "name": "Panipuri & Dahipuri",
           "team": "Mahima Dhakar • Maa Bharti",
           "description": "Room 2, White Board corner",
-          "image": "mahima.jpg"
+          "image": "https://i.pinimg.com/736x/eb/8b/71/eb8b71ed70cb960831b2327986653f2d.jpg"
         },
         {
           "id": "chesta-sharma",
           "name": "Coffee",
           "team": "Chesta Sharma • Maa Bharti",
           "description": "Room 2, Double window corner",
-          "image": "https://i.pinimg.com/736x/31/5d/45/315d45c273b664e7d9f8182fba729011.jpg"
+          "image": "https://i.pinimg.com/736x/f0/65/5f/f0655f2737da76be9b4ac435c65e3d9b.jpg"
         },
         {
           "id": "kritika-singh",
           "name": "Chana jor garam",
           "team": "Kritika Singh • Maa Bharti",
           "description": "Room 2, Window korner",
-          "image": "https://i.pinimg.com/736x/e5/b9/86/e5b986257009e8d033f2e203b32db649.jpg"
+          "image": "https://i.pinimg.com/736x/2e/24/3d/2e243d6252b39dffc5881eada03bb1c2.jpg"
         },
         {
           "id": "deepak-bairwa-aman-group",
           "name": "Vada Pav",
           "team": "Deepak Bairwa, Aman group • Maa Bharti",
           "description": "Room 2, Electricity Corner",
-          "image": "https://i.pinimg.com/736x/0b/09/9b/0b099be98e5a8400911e5dffb2377d30.jpg"
+          "image": "https://i.pinimg.com/736x/b2/f5/ae/b2f5aee563003508e7fb19d47e1114cd.jpg"
         },
         {
           "id": "bhuvi-meshwary",
@@ -73,7 +73,7 @@
           "name": "fruit chat",
           "team": "Laxmi, Komal, Antima, Raksha group • Maa Bharti",
           "description": "Room 2, white board corner",
-          "image": "https://i.pinimg.com/1200x/0b/84/e6/0b84e6c2f405373a6567a83c005ba2d4.jpg"
+          "image": "https://i.pinimg.com/1200x/75/27/4b/75274b9b8b6a6bb6ef737a96182b1545.jpghttps://i.pinimg.com/1200x/75/27/4b/75274b9b8b6a6bb6ef737a96182b1545.jpg"
         }
       
     ]
@@ -131,21 +131,21 @@
         "name": "Jewellery",
         "team": "Kashish (BCA III sem)",
         "description": "Room 3, electricity green corner",
-        "image": ""
+        "image": "https://i.pinimg.com/1200x/66/bf/12/66bf129c092b212a754552aafb04cdc3.jpg"
       },
       {
         "id": "manish",
         "name": "Perfumes (itry)",
         "team": "Manish (BCA II sem)",
         "description": "Room 3, electricity corner",
-        "image": ""
+        "image": "https://i.pinimg.com/736x/95/13/8e/95138e0951241d6b9573fbfea0fb5bfd.jpg"
       },
       {
         "id": "jain-jai-shree-masale-shivanshu",
         "name": "Jai shree masale",
         "team": "Jain (Jai shree masale), (shivanshu) BCA 2",
         "description": "Room 3, window corner",
-        "image": ""
+        "image": "https://i.pinimg.com/736x/f2/55/fc/f255fce3425b8d274e73cf92d7a885e5.jpg"
       }
     ]
   }
