@@ -1674,7 +1674,7 @@ const handleSubmitAllRatings = async () => {
   }, 5000);
 };
 
-// Get next Monday at 00:00:00
+// Get next Monday at 11:00 AM
 const getNextMonday = () => {
   const now = new Date();
   const dayOfWeek = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
@@ -1685,12 +1685,13 @@ const getNextMonday = () => {
     // If today is Sunday, next Monday is tomorrow
     daysUntilMonday = 1;
   } else if (dayOfWeek === 1) {
-    // If today is Monday, check if it's past midnight
+    // If today is Monday, check if it's past 11 AM
     const hours = now.getHours();
-    if (hours === 0 && now.getMinutes() === 0 && now.getSeconds() === 0) {
-      daysUntilMonday = 0; // It's exactly Monday 00:00:00
+    const minutes = now.getMinutes();
+    if (hours < 11 || (hours === 11 && minutes === 0)) {
+      daysUntilMonday = 0; // It's before 11 AM on Monday, use today
     } else {
-      daysUntilMonday = 7; // Next Monday is 7 days away
+      daysUntilMonday = 7; // It's past 11 AM, next Monday is 7 days away
     }
   } else {
     // For Tuesday-Saturday, calculate days until next Monday
@@ -1699,25 +1700,85 @@ const getNextMonday = () => {
   
   const nextMonday = new Date(now);
   nextMonday.setDate(now.getDate() + daysUntilMonday);
-  nextMonday.setHours(0, 0, 0, 0); // Set to midnight
+  nextMonday.setHours(11, 0, 0, 0); // Set to 11:00 AM
   
   return nextMonday;
+};
+
+// Show winner card
+const showWinnerCard = async () => {
+  const countdownContainer = document.getElementById("countdownContainer");
+  const winnerCard = document.getElementById("winnerRevealCard");
+  
+  if (!countdownContainer || !winnerCard) return;
+  
+  // Hide countdown
+  countdownContainer.style.display = "none";
+  
+  // Load stall image from stalls.json
+  try {
+    const response = await fetch("stalls.json");
+    const stallsData = await response.json();
+    
+    // Find chaihop stall
+    let winnerImageUrl = "";
+    for (const zone of stallsData) {
+      const stall = zone.stalls?.find(s => s.id === "chaihop");
+      if (stall && stall.image) {
+        winnerImageUrl = stall.image;
+        break;
+      }
+    }
+    
+    // Set winner image
+    const winnerImage = document.getElementById("winnerImage");
+    if (winnerImage && winnerImageUrl) {
+      winnerImage.src = winnerImageUrl;
+      winnerImage.onerror = () => {
+        // Fallback if image fails to load
+        winnerImage.style.display = "none";
+      };
+    }
+  } catch (error) {
+    console.error("Error loading stall image:", error);
+  }
+  
+  // Set winner data
+  document.getElementById("winnerName").textContent = "Parth & Group";
+  document.getElementById("winnerStall").textContent = "ChaiWala";
+  document.getElementById("winnerTotalRatings").textContent = "52";
+  document.getElementById("winnerTotalStars").textContent = "216";
+  document.getElementById("winnerAverage").textContent = "4.1 ⭐";
+  
+  // Show winner card with animation
+  winnerCard.style.display = "block";
+  setTimeout(() => {
+    winnerCard.classList.add("show");
+  }, 100);
 };
 
 // Countdown timer function
 const startCountdown = () => {
   const targetDate = getNextMonday();
+  let countdownInterval = null;
   
   const updateCountdown = () => {
     const now = new Date();
     const difference = targetDate - now;
     
     if (difference <= 0) {
-      // Countdown finished
+      // Countdown finished - show winner
       document.getElementById("days").textContent = "00";
       document.getElementById("hours").textContent = "00";
       document.getElementById("minutes").textContent = "00";
       document.getElementById("seconds").textContent = "00";
+      
+      if (countdownInterval) {
+        clearInterval(countdownInterval);
+      }
+      
+      // Show winner card
+      showWinnerCard();
       return;
     }
     
@@ -1736,7 +1797,7 @@ const startCountdown = () => {
   updateCountdown();
   
   // Update every second
-  setInterval(updateCountdown, 1000);
+  countdownInterval = setInterval(updateCountdown, 1000);
 };
 
 // Track page visit and store in Firebase

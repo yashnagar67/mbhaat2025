@@ -67,7 +67,7 @@
           <p class="announcement-message">
             The winner will be declared on <strong>Monday</strong>! 🎉
           </p>
-          <div class="countdown-container">
+          <div class="countdown-container" id="countdownContainer">
             <p class="countdown-label">Time until announcement:</p>
             <div class="countdown-timer" id="countdownTimer">
               <div class="countdown-item">
@@ -88,6 +88,41 @@
               <div class="countdown-item">
                 <span class="countdown-value" id="seconds">00</span>
                 <span class="countdown-label-small">Seconds</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Winner Card (shown when countdown ends) -->
+          <div class="winner-reveal-card" id="winnerRevealCard" style="display: none;">
+            <div class="winner-sparkles" aria-hidden="true">
+              <span class="sparkle">✨</span>
+              <span class="sparkle">⭐</span>
+              <span class="sparkle">✨</span>
+              <span class="sparkle">💫</span>
+              <span class="sparkle">✨</span>
+              <span class="sparkle">⭐</span>
+              <span class="sparkle">✨</span>
+              <span class="sparkle">💫</span>
+            </div>
+            <div class="winner-crown">👑</div>
+            <h3 class="winner-title">🏆 THE WINNER IS 🏆</h3>
+            <div class="winner-image-container">
+              <img class="winner-image" id="winnerImage" src="" alt="Winner stall image" />
+            </div>
+            <h4 class="winner-name" id="winnerName">Parth & Group</h4>
+            <p class="winner-stall" id="winnerStall">ChaiWala</p>
+            <div class="winner-stats">
+              <div class="winner-stat-item">
+                <span class="stat-label">Total Ratings</span>
+                <span class="stat-value" id="winnerTotalRatings">52</span>
+              </div>
+              <div class="winner-stat-item">
+                <span class="stat-label">Total Stars</span>
+                <span class="stat-value" id="winnerTotalStars">216</span>
+              </div>
+              <div class="winner-stat-item">
+                <span class="stat-label">Average Rating</span>
+                <span class="stat-value" id="winnerAverage">4.1 ⭐</span>
               </div>
             </div>
           </div>
