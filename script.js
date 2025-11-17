@@ -1998,8 +1998,10 @@ const initApp = async () => {
   // Update participant message with username (run after DOM is ready)
   updateParticipantMessage();
   
-  // Start countdown timer
-  startCountdown();
+  // Show winner immediately (timer removed)
+  setTimeout(() => {
+    showWinnerCard();
+  }, 500);
   
   // Initialize admin panel (still available for admin access)
   initAdminPanel();
