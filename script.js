@@ -1709,24 +1709,40 @@ const getNextMonday = () => {
 const showWinnerCard = async () => {
   const countdownContainer = document.getElementById("countdownContainer");
   const winnerCard = document.getElementById("winnerRevealCard");
+  const runnersUpContainer = document.getElementById("runnersUpContainer");
   
   if (!countdownContainer || !winnerCard) return;
   
   // Hide countdown
   countdownContainer.style.display = "none";
   
-  // Load stall image from stalls.json
+  // Load stall images from stalls.json
   try {
     const response = await fetch("stalls.json");
     const stallsData = await response.json();
     
-    // Find chaihop stall
+    // Find winner stall (chaihop)
     let winnerImageUrl = "";
+    let runnerUp2ImageUrl = "";
+    let runnerUp3ImageUrl = "";
+    
     for (const zone of stallsData) {
-      const stall = zone.stalls?.find(s => s.id === "chaihop");
-      if (stall && stall.image) {
-        winnerImageUrl = stall.image;
-        break;
+      // Find winner (chaihop)
+      const winnerStall = zone.stalls?.find(s => s.id === "chaihop");
+      if (winnerStall && winnerStall.image) {
+        winnerImageUrl = winnerStall.image;
+      }
+      
+      // Find 2nd place (chesta - coffee)
+      const runnerUp2Stall = zone.stalls?.find(s => s.id === "chesta-sharma");
+      if (runnerUp2Stall && runnerUp2Stall.image) {
+        runnerUp2ImageUrl = runnerUp2Stall.image;
+      }
+      
+      // Find 3rd place (aashima - sandwich)
+      const runnerUp3Stall = zone.stalls?.find(s => s.id === "aashima-group");
+      if (runnerUp3Stall && runnerUp3Stall.image) {
+        runnerUp3ImageUrl = runnerUp3Stall.image;
       }
     }
     
@@ -1735,12 +1751,29 @@ const showWinnerCard = async () => {
     if (winnerImage && winnerImageUrl) {
       winnerImage.src = winnerImageUrl;
       winnerImage.onerror = () => {
-        // Fallback if image fails to load
         winnerImage.style.display = "none";
       };
     }
+    
+    // Set 2nd place image
+    const runnerUp2Image = document.getElementById("runnerUp2Image");
+    if (runnerUp2Image && runnerUp2ImageUrl) {
+      runnerUp2Image.src = runnerUp2ImageUrl;
+      runnerUp2Image.onerror = () => {
+        runnerUp2Image.style.display = "none";
+      };
+    }
+    
+    // Set 3rd place image
+    const runnerUp3Image = document.getElementById("runnerUp3Image");
+    if (runnerUp3Image && runnerUp3ImageUrl) {
+      runnerUp3Image.src = runnerUp3ImageUrl;
+      runnerUp3Image.onerror = () => {
+        runnerUp3Image.style.display = "none";
+      };
+    }
   } catch (error) {
-    console.error("Error loading stall image:", error);
+    console.error("Error loading stall images:", error);
   }
   
   // Set winner data
@@ -1750,11 +1783,31 @@ const showWinnerCard = async () => {
   document.getElementById("winnerTotalStars").textContent = "216";
   document.getElementById("winnerAverage").textContent = "4.1 ⭐";
   
+  // Set 2nd place data
+  document.getElementById("runnerUp2Name").textContent = "Chesta & Group";
+  document.getElementById("runnerUp2Stall").textContent = "Coffee Wale";
+  document.getElementById("runnerUp2Rating").textContent = "49";
+  
+  // Set 3rd place data
+  document.getElementById("runnerUp3Name").textContent = "Aashima & Group";
+  document.getElementById("runnerUp3Stall").textContent = "Sandwichwale";
+  document.getElementById("runnerUp3Rating").textContent = "46";
+  
   // Show winner card with animation
   winnerCard.style.display = "block";
   setTimeout(() => {
     winnerCard.classList.add("show");
   }, 100);
+  
+  // Show runner-up cards with delay
+  if (runnersUpContainer) {
+    setTimeout(() => {
+      runnersUpContainer.style.display = "block";
+      setTimeout(() => {
+        runnersUpContainer.classList.add("show");
+      }, 100);
+    }, 500); // Show after winner card appears
+  }
 };
 
 // Countdown timer function
