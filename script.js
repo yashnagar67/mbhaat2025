@@ -1981,6 +1981,254 @@ const updateParticipantMessage = () => {
   }
 };
 
+// Store freshers party response in Firebase
+const storeFreshersPartyResponse = async (response, questionType = "freshers_party") => {
+  try {
+    if (!db) {
+      console.warn("Firebase not initialized, cannot store freshers party response");
+      return;
+    }
+    
+    const userInfo = getUserInfo();
+    if (!userInfo || !userInfo.name) {
+      console.warn("No user name found in localStorage, cannot store freshers party response");
+      return;
+    }
+    
+    const userName = String(userInfo.name).trim();
+    if (!userName) {
+      console.warn("User name is empty, cannot store freshers party response");
+      return;
+    }
+    
+    // Use normalized username as document ID
+    const docId = normalizeUserName(userName);
+    
+    // Get current time
+    const now = new Date();
+    
+    // Format local time
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const dayName = days[now.getDay()];
+    const monthName = months[now.getMonth()];
+    const day = String(now.getDate()).padStart(2, '0');
+    const year = now.getFullYear();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    
+    // Get timezone offset and format it
+    const timezoneOffset = -now.getTimezoneOffset();
+    const offsetHours = Math.floor(Math.abs(timezoneOffset) / 60);
+    const offsetMinutes = Math.abs(timezoneOffset) % 60;
+    const offsetSign = timezoneOffset >= 0 ? '+' : '-';
+    const timezoneString = `${offsetSign}${String(offsetHours).padStart(2, '0')}${String(offsetMinutes).padStart(2, '0')}`;
+    
+    // Format: "Sat, 15 Nov 2025 09:31:36 +0530" (local time with timezone)
+    const localTimestamp = `${dayName}, ${day} ${monthName} ${year} ${hours}:${minutes}:${seconds} ${timezoneString}`;
+    
+    // Also keep UTC timestamp for reference
+    const utcTimestampISO = now.toISOString();
+    
+    // Prepare data with user info and response
+    const responseData = {
+      userName: userName,
+      userCourse: userInfo.course || '',
+      response: response, // "yes" or "no"
+      questionType: questionType, // "freshers_party" or "activity_participation"
+      timestamp: localTimestamp,
+      timestampISO: utcTimestampISO,
+      timestampMillis: now.getTime(),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+    };
+    
+    // Store in Firebase collection "freshers_party_responses"
+    const responseRef = db.collection("freshers_party_responses").doc(docId);
+    const existingDoc = await responseRef.get();
+    const existingData = existingDoc.exists ? existingDoc.data() : {};
+    
+    // Merge with existing data, but update the specific question response
+    const updatedData = {
+      ...existingData,
+      ...responseData,
+      // Keep both responses if they exist
+      freshersPartyResponse: questionType === "freshers_party" ? response : (existingData.freshersPartyResponse || null),
+      activityResponse: questionType === "activity_participation" ? response : (existingData.activityResponse || null),
+    };
+    
+    await responseRef.set(updatedData, { merge: true });
+    
+    console.log(`Freshers party response stored for ${userName}: ${response} (${questionType})`);
+    return true;
+  } catch (error) {
+    console.error("Error storing freshers party response:", error);
+    return false;
+  }
+};
+
+// Check if user has already responded to freshers party question
+const checkExistingFreshersPartyResponse = async () => {
+  try {
+    if (!db) {
+      return null;
+    }
+    
+    const userInfo = getUserInfo();
+    if (!userInfo || !userInfo.name) {
+      return null;
+    }
+    
+    const userName = String(userInfo.name).trim();
+    if (!userName) {
+      return null;
+    }
+    
+    const docId = normalizeUserName(userName);
+    const responseRef = db.collection("freshers_party_responses").doc(docId);
+    const responseDoc = await responseRef.get();
+    
+    if (responseDoc.exists) {
+      const data = responseDoc.data();
+      // Return data with both responses (using new structure or legacy)
+      return {
+        freshersPartyResponse: data.freshersPartyResponse || data.response,
+        activityResponse: data.activityResponse,
+        ...data
+      };
+    }
+    
+    return null;
+  } catch (error) {
+    console.error("Error checking existing freshers party response:", error);
+    return null;
+  }
+};
+
+// Initialize freshers party question handlers
+const initFreshersPartyQuestion = async () => {
+  const yesBtn = document.getElementById("freshersYes");
+  const noBtn = document.getElementById("freshersNo");
+  const buttonsContainer = document.getElementById("freshersPartyButtons");
+  const thanksMessage = document.getElementById("freshersPartyThanks");
+  const firstQuestionCard = document.getElementById("firstQuestionCard");
+  const secondQuestionCard = document.getElementById("secondQuestionCard");
+  const activityYesBtn = document.getElementById("activityYes");
+  const activityNoBtn = document.getElementById("activityNo");
+  const activityButtonsContainer = document.getElementById("activityButtons");
+  const activityThanks = document.getElementById("activityThanks");
+  
+  if (!yesBtn || !noBtn || !buttonsContainer || !thanksMessage || !firstQuestionCard || !secondQuestionCard) {
+    console.warn("Freshers party question elements not found");
+    return;
+  }
+  
+  // Check if user has already responded
+  if (db) {
+    const existingResponse = await checkExistingFreshersPartyResponse();
+    if (existingResponse && existingResponse.freshersPartyResponse) {
+      // User has already responded to first question
+      if (existingResponse.freshersPartyResponse === "yes") {
+        // If they said yes, check if they answered the second question
+        if (existingResponse.activityResponse) {
+          // They answered both questions, show final thanks
+          firstQuestionCard.classList.add("hidden");
+          secondQuestionCard.classList.remove("hidden");
+          if (activityButtonsContainer) activityButtonsContainer.classList.add("hidden");
+          if (activityThanks) activityThanks.classList.remove("hidden");
+        } else {
+          // They said yes but haven't answered second question yet
+          firstQuestionCard.classList.add("hidden");
+          secondQuestionCard.classList.remove("hidden");
+        }
+      } else {
+        // They said no, just show thanks
+        firstQuestionCard.classList.remove("hidden");
+        secondQuestionCard.classList.add("hidden");
+        buttonsContainer.classList.add("hidden");
+        thanksMessage.classList.remove("hidden");
+      }
+      return;
+    }
+  }
+  
+  // Handle first question response
+  const handleFirstResponse = async (response) => {
+    // Disable both buttons
+    yesBtn.disabled = true;
+    noBtn.disabled = true;
+    yesBtn.style.opacity = "0.6";
+    noBtn.style.opacity = "0.6";
+    yesBtn.style.cursor = "not-allowed";
+    noBtn.style.cursor = "not-allowed";
+    
+    // Store response in Firebase
+    const success = await storeFreshersPartyResponse(response, "freshers_party");
+    
+    if (success) {
+      if (response === "yes") {
+        // Hide first question and show second question
+        firstQuestionCard.classList.add("hidden");
+        secondQuestionCard.classList.remove("hidden");
+      } else {
+        // Hide buttons and show thanks message
+        buttonsContainer.classList.add("hidden");
+        thanksMessage.classList.remove("hidden");
+      }
+    } else {
+      // Re-enable buttons if storage failed
+      yesBtn.disabled = false;
+      noBtn.disabled = false;
+      yesBtn.style.opacity = "1";
+      noBtn.style.opacity = "1";
+      yesBtn.style.cursor = "pointer";
+      noBtn.style.cursor = "pointer";
+      alert("Failed to save your response. Please try again.");
+    }
+  };
+  
+  // Handle second question response
+  const handleSecondResponse = async (response) => {
+    if (!activityYesBtn || !activityNoBtn || !activityButtonsContainer || !activityThanks) {
+      return;
+    }
+    
+    // Disable both buttons
+    activityYesBtn.disabled = true;
+    activityNoBtn.disabled = true;
+    activityYesBtn.style.opacity = "0.6";
+    activityNoBtn.style.opacity = "0.6";
+    activityYesBtn.style.cursor = "not-allowed";
+    activityNoBtn.style.cursor = "not-allowed";
+    
+    // Store response in Firebase
+    const success = await storeFreshersPartyResponse(response, "activity_participation");
+    
+    if (success) {
+      // Hide buttons and show thanks message
+      activityButtonsContainer.classList.add("hidden");
+      activityThanks.classList.remove("hidden");
+    } else {
+      // Re-enable buttons if storage failed
+      activityYesBtn.disabled = false;
+      activityNoBtn.disabled = false;
+      activityYesBtn.style.opacity = "1";
+      activityNoBtn.style.opacity = "1";
+      activityYesBtn.style.cursor = "pointer";
+      activityNoBtn.style.cursor = "pointer";
+      alert("Failed to save your response. Please try again.");
+    }
+  };
+  
+  yesBtn.addEventListener("click", () => handleFirstResponse("yes"));
+  noBtn.addEventListener("click", () => handleFirstResponse("no"));
+  
+  if (activityYesBtn && activityNoBtn) {
+    activityYesBtn.addEventListener("click", () => handleSecondResponse("yes"));
+    activityNoBtn.addEventListener("click", () => handleSecondResponse("no"));
+  }
+};
+
 const initApp = async () => {
   // Ensure Firebase is initialized
   if (typeof firebase !== 'undefined' && !db) {
@@ -1996,15 +2244,25 @@ const initApp = async () => {
   }, 500);
 
   // Update participant message with username (run after DOM is ready)
-  updateParticipantMessage();
-  
-  // Show winner immediately (timer removed)
-  setTimeout(() => {
-    showWinnerCard();
-  }, 500);
+  // Simplified for coming soon page
+  const participantMessage = document.getElementById("participantMessage");
+  if (participantMessage) {
+    const userInfo = getUserInfo();
+    if (userInfo && userInfo.name) {
+      const userName = String(userInfo.name).trim();
+      if (userName) {
+        participantMessage.innerHTML = `Welcome back <strong style="color: #ff8c42; text-shadow: 0 2px 4px rgba(255, 140, 66, 0.3); font-size: 1.3em;">${userName}</strong>! <span aria-hidden="true">✨✨</span>`;
+      }
+    }
+  }
   
   // Initialize admin panel (still available for admin access)
   initAdminPanel();
+  
+  // Initialize freshers party question (wait a bit for Firebase to be ready)
+  setTimeout(async () => {
+    await initFreshersPartyQuestion();
+  }, 500);
   
   // Load summary from Firebase if available
   if (db) {
@@ -2014,9 +2272,9 @@ const initApp = async () => {
 
 // Run when DOM is ready
 if (document.readyState === 'loading') {
-  document.addEventListener("DOMContentLoaded", () => {
-    initApp();
-  });
+document.addEventListener("DOMContentLoaded", () => {
+  initApp();
+});
 } else {
   // DOM is already loaded
   initApp();

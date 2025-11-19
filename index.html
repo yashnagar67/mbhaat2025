@@ -49,117 +49,73 @@
         <button class="admin-btn" id="openAdmin" aria-haspopup="dialog">
           Admin Panel
         </button>
-        <p class="hero__spark ui-title">MB HAAT 2025 —</p>
-        <h1 class="hero__headline ui-subtitle">Event Completed! 🎉</h1>
-        <p class="hero__subtitle ui-tagline" id="participantMessage">
-          Thank you for participating!
+        <p class="hero__spark ui-title">MB HAAT —</p>
+        <h1 class="hero__headline ui-subtitle">New Event Coming Soon! 🎉</h1>
+        <p class="hero__subtitle ui-tagline">
+          Get ready for the next amazing event!
           <span aria-hidden="true">✨✨</span>
         </p>
         <p class="hero__note ui-note">
-          Stay tuned for the winner announcement! 🏆
+          Stay tuned for updates! 🎊
         </p>
       </header>
 
-      <section class="winner-announcement ui-card-stack" id="winnerAnnouncement">
-        <article class="announcement-card">
-          <div class="announcement-icon">🏆</div>
-        <h2 class="announcement-title">Winner Announcement</h2>
-          <div class="countdown-container" id="countdownContainer">
-            <p class="countdown-label">Time until announcement:</p>
-            <div class="countdown-timer" id="countdownTimer">
-              <div class="countdown-item">
-                <span class="countdown-value" id="days">00</span>
-                <span class="countdown-label-small">Days</span>
-              </div>
-              <div class="countdown-separator">:</div>
-              <div class="countdown-item">
-                <span class="countdown-value" id="hours">00</span>
-                <span class="countdown-label-small">Hours</span>
-              </div>
-              <div class="countdown-separator">:</div>
-              <div class="countdown-item">
-                <span class="countdown-value" id="minutes">00</span>
-                <span class="countdown-label-small">Minutes</span>
-              </div>
-              <div class="countdown-separator">:</div>
-              <div class="countdown-item">
-                <span class="countdown-value" id="seconds">00</span>
-                <span class="countdown-label-small">Seconds</span>
-              </div>
-            </div>
+      <section class="coming-soon-section ui-card-stack" id="comingSoonSection">
+        <article class="coming-soon-card">
+          <div class="coming-soon-icon">🎪</div>
+          <h2 class="coming-soon-title">New Event Coming Soon!</h2>
+          <p class="coming-soon-message">
+            We're preparing something amazing for you! 🎉
+          </p>
+          <p class="coming-soon-submessage">
+            Check back soon for the next exciting event.
+          </p>
+          <div class="coming-soon-sparkles" aria-hidden="true">
+            <span class="sparkle-item">✨</span>
+            <span class="sparkle-item">⭐</span>
+            <span class="sparkle-item">🎊</span>
+            <span class="sparkle-item">🎈</span>
+            <span class="sparkle-item">✨</span>
+            <span class="sparkle-item">⭐</span>
           </div>
-          
-          <!-- Winner Card (shown when countdown ends) -->
-          <div class="winner-reveal-card" id="winnerRevealCard" style="display: none;">
-            <div class="winner-sparkles" aria-hidden="true">
-              <span class="sparkle">✨</span>
-              <span class="sparkle">⭐</span>
-              <span class="sparkle">✨</span>
-              <span class="sparkle">💫</span>
-              <span class="sparkle">✨</span>
-              <span class="sparkle">⭐</span>
-              <span class="sparkle">✨</span>
-              <span class="sparkle">💫</span>
-            </div>
-            <div class="winner-crown">👑</div>
-            <h3 class="winner-title">🏆 THE WINNER IS 🏆</h3>
-            <div class="winner-image-container">
-              <img class="winner-image" id="winnerImage" src="" alt="Winner stall image" />
-            </div>
-            <h4 class="winner-name" id="winnerName">Parth & Group</h4>
-            <p class="winner-stall" id="winnerStall">ChaiWala</p>
-            <div class="winner-stats">
-              <div class="winner-stat-item">
-                <span class="stat-label">Total Ratings</span>
-                <span class="stat-value" id="winnerTotalRatings">52</span>
-              </div>
-              <div class="winner-stat-item">
-                <span class="stat-label">Total Stars</span>
-                <span class="stat-value" id="winnerTotalStars">216</span>
-              </div>
-              <div class="winner-stat-item">
-                <span class="stat-label">Average Rating</span>
-                <span class="stat-value" id="winnerAverage">4.1 ⭐</span>
-              </div>
-            </div>
+        </article>
+      </section>
+
+      <section class="freshers-party-section ui-card-stack" id="freshersPartySection">
+        <article class="freshers-party-card" id="firstQuestionCard">
+          <div class="freshers-party-icon">🎉</div>
+          <h2 class="freshers-party-title">Are you waiting for freshers party?</h2>
+          <div class="freshers-party-buttons" id="freshersPartyButtons">
+            <button class="freshers-btn freshers-btn--yes" id="freshersYes" aria-label="Yes, I'm waiting for freshers party">
+              <span class="btn-emoji">✅</span>
+              <span class="btn-text">Yes</span>
+            </button>
+            <button class="freshers-btn freshers-btn--no" id="freshersNo" aria-label="No, I'm not waiting for freshers party">
+              <span class="btn-emoji">❌</span>
+              <span class="btn-text">No</span>
+            </button>
           </div>
-          
-          <!-- Runner-up Cards (shown when countdown ends) -->
-          <div class="runners-up-container" id="runnersUpContainer" style="display: none;">
-            <h4 class="runners-up-title">🥈 Other Top Performers 🥉</h4>
-            <div class="runners-up-cards">
-              <div class="runner-up-card" id="runnerUp2nd">
-                <div class="runner-up-badge">2nd</div>
-                <div class="runner-up-image-container">
-                  <img class="runner-up-image" id="runnerUp2Image" src="" alt="2nd place stall" />
-                </div>
-                <h5 class="runner-up-name" id="runnerUp2Name">Chesta & Group</h5>
-                <p class="runner-up-stall" id="runnerUp2Stall">Coffee Wale</p>
-                <div class="runner-up-stat">
-                  <span class="runner-up-stat-label">Ratings</span>
-                  <span class="runner-up-stat-value" id="runnerUp2Rating">49</span>
-                </div>
-              </div>
-              
-              <div class="runner-up-card" id="runnerUp3rd">
-                <div class="runner-up-badge">3rd</div>
-                <div class="runner-up-image-container">
-                  <img class="runner-up-image" id="runnerUp3Image" src="" alt="3rd place stall" />
-                </div>
-                <h5 class="runner-up-name" id="runnerUp3Name">Aashima & Group</h5>
-                <p class="runner-up-stall" id="runnerUp3Stall">Sandwichwale</p>
-                <div class="runner-up-stat">
-                  <span class="runner-up-stat-label">Ratings</span>
-                  <span class="runner-up-stat-value" id="runnerUp3Rating">46</span>
-                </div>
-              </div>
-            </div>
+          <p class="freshers-party-thanks hidden" id="freshersPartyThanks">
+            Thank you for your response! 🙏
+          </p>
+        </article>
+        
+        <article class="freshers-party-card hidden" id="secondQuestionCard">
+          <div class="freshers-party-icon">💃</div>
+          <h2 class="freshers-party-title">Will you participate in dance?</h2>
+          <div class="freshers-party-buttons" id="activityButtons">
+            <button class="freshers-btn freshers-btn--yes" id="activityYes" aria-label="Yes, I will participate">
+              <span class="btn-emoji">✅</span>
+              <span class="btn-text">Yes</span>
+            </button>
+            <button class="freshers-btn freshers-btn--no" id="activityNo" aria-label="No, I will not participate">
+              <span class="btn-emoji">❌</span>
+              <span class="btn-text">No</span>
+            </button>
           </div>
-          
-          <div class="thanks-message">
-            <p>We thank all the students that rated! 🙏</p>
-            <p class="developer-credit">Developer: <strong>Yash Nagar</strong></p>
-          </div>
+          <p class="freshers-party-thanks hidden" id="activityThanks">
+            Thank you for your response! 🙏
+          </p>
         </article>
       </section>
     </main>

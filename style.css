@@ -234,6 +234,343 @@ body {
   }
 }
 
+/* Coming Soon Card Styles */
+.coming-soon-section {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.coming-soon-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(255, 251, 240, 0.98));
+  border-radius: 30px;
+  padding: clamp(40px, 6vw, 60px) clamp(28px, 5vw, 40px);
+  border: 3px solid rgba(255, 217, 61, 0.3);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.coming-soon-card::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+  animation: rotate 20s linear infinite;
+  pointer-events: none;
+}
+
+.coming-soon-icon {
+  font-size: clamp(4rem, 12vw, 6rem);
+  margin-bottom: 24px;
+  animation: bounce 2s ease-in-out infinite;
+  display: inline-block;
+  filter: drop-shadow(0 4px 8px rgba(255, 140, 66, 0.3));
+  position: relative;
+  z-index: 1;
+}
+
+.coming-soon-title {
+  font-family: "Fredoka One", cursive;
+  font-size: clamp(2rem, 6vw, 2.8rem);
+  color: #ff8c42;
+  text-shadow: 2px 2px 0px #ffd93d, -1px -1px 0px #fff, 1px -1px 0px #fff;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.coming-soon-message {
+  font-family: "Comic Neue", cursive;
+  font-size: clamp(1.2rem, 4vw, 1.6rem);
+  color: #2d3748;
+  font-weight: 700;
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 1;
+  line-height: 1.5;
+}
+
+.coming-soon-submessage {
+  font-family: "Comic Neue", cursive;
+  font-size: clamp(1rem, 3vw, 1.2rem);
+  color: #4d96a9;
+  font-weight: 600;
+  position: relative;
+  z-index: 1;
+  line-height: 1.5;
+}
+
+.coming-soon-sparkles {
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.coming-soon-sparkles .sparkle-item {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  animation: sparkleFloat 3s ease-in-out infinite;
+  display: inline-block;
+}
+
+.coming-soon-sparkles .sparkle-item:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.coming-soon-sparkles .sparkle-item:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.coming-soon-sparkles .sparkle-item:nth-child(3) {
+  animation-delay: 1s;
+}
+
+.coming-soon-sparkles .sparkle-item:nth-child(4) {
+  animation-delay: 1.5s;
+}
+
+.coming-soon-sparkles .sparkle-item:nth-child(5) {
+  animation-delay: 2s;
+}
+
+.coming-soon-sparkles .sparkle-item:nth-child(6) {
+  animation-delay: 2.5s;
+}
+
+/* Freshers Party Section */
+.freshers-party-section {
+  max-width: 500px;
+  margin: 32px auto 0;
+}
+
+.freshers-party-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(240, 248, 255, 0.98));
+  border-radius: 30px;
+  padding: clamp(40px, 6vw, 60px) clamp(28px, 5vw, 40px);
+  border: 3px solid rgba(107, 203, 119, 0.3);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.freshers-party-card::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(107, 203, 119, 0.1) 0%, transparent 70%);
+  animation: rotate 20s linear infinite;
+  pointer-events: none;
+}
+
+.freshers-party-icon {
+  font-size: clamp(3.5rem, 10vw, 5rem);
+  margin-bottom: 24px;
+  animation: bounce 2s ease-in-out infinite;
+  display: inline-block;
+  filter: drop-shadow(0 4px 8px rgba(107, 203, 119, 0.3));
+  position: relative;
+  z-index: 1;
+}
+
+.freshers-party-title {
+  font-family: "Fredoka One", cursive;
+  font-size: clamp(1.6rem, 5vw, 2.4rem);
+  color: #6bcb77;
+  text-shadow: 2px 2px 0px #4d96a9, -1px -1px 0px #fff, 1px -1px 0px #fff;
+  margin-bottom: 32px;
+  position: relative;
+  z-index: 1;
+  line-height: 1.3;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.freshers-party-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.freshers-btn {
+  flex: 1;
+  min-width: 120px;
+  max-width: 180px;
+  padding: clamp(16px, 4vw, 20px) clamp(24px, 5vw, 32px);
+  border: none;
+  border-radius: 20px;
+  font-family: "Comic Neue", cursive;
+  font-size: clamp(1.1rem, 4vw, 1.4rem);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.freshers-btn::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.freshers-btn:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+.freshers-btn--yes {
+  background: linear-gradient(135deg, #6bcb77, #4d96a9);
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.freshers-btn--yes:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 12px 28px rgba(107, 203, 119, 0.4);
+}
+
+.freshers-btn--yes:active {
+  transform: translateY(-2px) scale(1.02);
+}
+
+.freshers-btn--no {
+  background: linear-gradient(135deg, #ff6b6b, #ff8c42);
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.freshers-btn--no:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 12px 28px rgba(255, 107, 107, 0.4);
+}
+
+.freshers-btn--no:active {
+  transform: translateY(-2px) scale(1.02);
+}
+
+.freshers-btn .btn-emoji {
+  font-size: clamp(2rem, 6vw, 2.5rem);
+  display: block;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+.freshers-btn .btn-text {
+  font-size: clamp(1.1rem, 4vw, 1.4rem);
+  display: block;
+}
+
+.freshers-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.freshers-party-thanks {
+  font-family: "Comic Neue", cursive;
+  font-size: clamp(1.2rem, 4vw, 1.5rem);
+  color: #6bcb77;
+  font-weight: 700;
+  position: relative;
+  z-index: 1;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.freshers-party-thanks.hidden {
+  display: none;
+}
+
+.freshers-party-card.hidden {
+  display: none;
+}
+
+.freshers-party-card {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.freshers-party-card:not(.hidden) {
+  animation: fadeInSlide 0.5s ease-out;
+}
+
+@keyframes fadeInSlide {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive adjustments for freshers party section */
+@media (max-width: 600px) {
+  .freshers-party-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .freshers-btn {
+    max-width: 100%;
+    width: 100%;
+  }
+  
+  .freshers-party-title {
+    font-size: clamp(1.4rem, 6vw, 2rem);
+    padding: 0 8px;
+  }
+}
+
 /* Winner Reveal Card Styles */
 .winner-reveal-card {
   margin-top: 32px;
@@ -980,6 +1317,38 @@ body {
   
   .runner-up-stall {
     font-size: clamp(0.8rem, 2.5vw, 0.95rem) !important;
+  }
+  
+  .coming-soon-card {
+    padding: clamp(32px, 5vw, 50px) clamp(24px, 4vw, 36px) !important;
+  }
+  
+  .coming-soon-icon {
+    font-size: clamp(3.5rem, 10vw, 5rem) !important;
+    margin-bottom: 20px;
+  }
+  
+  .coming-soon-title {
+    font-size: clamp(1.6rem, 5vw, 2.4rem) !important;
+    margin-bottom: 16px;
+  }
+  
+  .coming-soon-message {
+    font-size: clamp(1rem, 3.5vw, 1.4rem) !important;
+    margin-bottom: 12px;
+  }
+  
+  .coming-soon-submessage {
+    font-size: clamp(0.9rem, 2.8vw, 1.1rem) !important;
+  }
+  
+  .coming-soon-sparkles {
+    margin-top: 24px;
+    gap: 12px;
+  }
+  
+  .coming-soon-sparkles .sparkle-item {
+    font-size: clamp(1.2rem, 3.5vw, 1.8rem) !important;
   }
 }
 
